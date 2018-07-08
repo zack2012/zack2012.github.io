@@ -1,38 +1,25 @@
 ---
-title: Hello World
+title: 回顾过去，展望未来
 ---
-Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [documentation](https://hexo.io/docs/) for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting](https://hexo.io/docs/troubleshooting.html) or you can ask me on [GitHub](https://github.com/hexojs/hexo/issues).
+入坑iOS已经快4年了，从一个一无所知的新手小白，到现在的熟练搬砖码农。回顾下这4年的经历，为自己以后发展定下方向。
 
-## Quick Start
+## 过去
+入坑iOS确实很偶然。2014年夏天，发生了一些事促使我下定决心转行做程序员，经过一段时间的调研，选择的方向是前端开发，原因很简单，觉得相对于后端，前端更容易入门，而且当时觉得先入门前端，以后在转后端比直接跨行转后端会容易的多，不得不说，这个想法天真了。
 
-### Create a new post
+经过两个月的自学，在过完国庆节后，提交了辞职报告，正式开始找工作。说来也巧，那时刚好快到老婆生日了，决定买个Mac pro送给老婆当生日礼物，结果买回来后自己却玩的飞起，对iPhone也非常感兴趣，刚好苹果当时发布了新的编程语言Swift，于是决定不找前端工作了，转iOS开发。
 
-``` bash
-$ hexo new "My New Post"
-```
+自学iOS只花了一个月的时间，对着书本用Objective-C敲一遍，在用Swift敲一遍，当时的Swift与现在比起来实在太烂了，有些功能甚至不用Objective-C根本无法完成。很多人认为Swift变的太快，太坑，但我觉得Swift如果不这么做的话，只会更坑，可能还没入场就被抬出场外了。关于Swift，以后会单独写一篇文章介绍。
 
-More info: [Writing](https://hexo.io/docs/writing.html)
+找工作还算顺利，12月初就开始了自己正式的iOS码农生涯。
 
-### Run server
+## 现在
+回顾过去的4年，我觉得自己iOS开发相关的知识(狭义)早在两年前就停滞不前了，在开始的2年内，我几乎阅读了苹果所的programming guide和出名的iOS blog，wwdc视频也从2011年看起，这让我进步神速，对整个iOS开发有了系统的认识。在开始的第1年，就有工作4、5年的同事向我请教问题，到了第2年，我已经习惯回答各种各样的问题，领导也放心把核心需求交给我开发。不夸张的说，头两年真是最幸福的两年，每天都有一堆guide、文章要看，生活相当充实。
 
-``` bash
-$ hexo server
-```
+后两年，我觉得个人成长主要集中在计算机基础和编程功底上。因为前两年的基础，iOS方面基本已经没什么可看的，自然而然开始把目光转向了自己的软肋-计算机基础，毕竟不是科班出身，改补的还是要补，操作系统、网络编程、多线程编程、算法等等。同时也开始更加注意自己的编程水平以及习惯，代码复用、稳定性、如何设计接口。编程技术不是可以靠看书快速积累的，只能靠一一行代码堆积起来，多写多反思。
 
-More info: [Server](https://hexo.io/docs/server.html)
+## 未来
+现在的移动开发有点像当年的windows桌面开发。google也从 mobile first 转向 AI first。更加有意思的是，iOS开发应该已经没有新人了，同事告诉我，今年参加公司的校招面试，两人加起来一共面试了25人，一个iOS开发也没有，都是安卓的，而且这些来面安卓的水平非常一般，对移动开发也没啥兴趣，可能就是在实验室里做了导师安排的一些项目。
 
-### Generate static files
+所以到了现在必须给自己定下方向的时候，没有方向，未来自己只可能虚度光阴、原地踏步。这个问题我也思考了快一年了，期间尝试过多个方向，最终选择了AR/VR方向，理由也很简单：兴趣、前景。
 
-``` bash
-$ hexo generate
-```
-
-More info: [Generating](https://hexo.io/docs/generating.html)
-
-### Deploy to remote sites
-
-``` bash
-$ hexo deploy
-```
-
-More info: [Deployment](https://hexo.io/docs/deployment.html)
+给自己定的第一阶段的目标是学习图形学相关知识，开发AR/VR应用，需要从2D转向3D，图形学是绕不开的，同时学习图形学需要大量的时间(图形学的书真是又厚又难懂)，趁现在AR/VR没有爆发，学习图形学相关知识正是时候，打下坚实的基础，迎接未来的挑战。
