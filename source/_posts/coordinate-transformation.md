@@ -4,10 +4,6 @@ date: 2018-08-04 11:23:34
 categories: 图形学
 mathjax: true
 ---
-<script type="text/javascript"
-       src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
 从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。
 
 ## 1. 数学知识
