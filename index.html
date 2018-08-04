@@ -108,30 +108,65 @@ MathJax.Hub.Config({
 k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=display">
 (s+t)\vec{a}=s\vec{a}+t\vec{a}</script><p>设</p>
 <script type="math/tex; mode=display">
-\vec{a}=(a_1,a_2,a_3,\dots,a_n)</script><script type="math/tex; mode=display">
-\vec{b}=(b_1,b_2,b_3,\dots,b_n)</script><p>则向量的长度定义为：  </p>
+\vec{a}=(a_1,a_2,a_3,\dots,a_n)</script><p>则向量的长度定义为：  </p>
 <script type="math/tex; mode=display">
-|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>范数的性质:</p>
+|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>长度性质:</p>
 <script type="math/tex; mode=display">
 |k\vec{a}|=|k|||\vec{a}|</script><script type="math/tex; mode=display">
-|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量的点积:  </p>
+|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量点积:  </p>
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n</script><script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示:  </p>
 <p><img src="/2018/08/04/coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="[title]">  </p>
 <p>由点积的公式可以知道，如果两个向量垂直(正交)，则  </p>
 <script type="math/tex; mode=display">
-\vec{a}\cdot\vec{b}=0</script><p>点积的性质:</p>
+\vec{a}\cdot\vec{b}=0</script><p>点积性质:</p>
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=\vec{b}\cdot\vec{a}</script><script type="math/tex; mode=display">
 (k\vec{a})\cdot\vec{b}=k(\vec{a}\cdot\vec{b})</script><script type="math/tex; mode=display">
 \vec{a}\cdot(\vec{b}+\vec{c})=\vec{a}\cdot\vec{b}+\vec{a}\cdot\vec{c}</script><script type="math/tex; mode=display">
 \vec{a}\cdot\vec{a}=|\vec{a}|^2</script><script type="math/tex; mode=display">
-|\vec{a}\cdot\vec{b}|\leq|\vec{a}||\vec{b}|</script>
+|\vec{a}\cdot\vec{b}|\leq|\vec{a}||\vec{b}|</script><p>向量叉积定义:  </p>
+<script type="math/tex; mode=display">
+\vec{a}\times\vec{b}=(a_2b_3-a_3b_2,a_3b_1-a_1b_3,a_1b_2-a_2b_1)</script><script type="math/tex; mode=display">
+|\vec{a}\times\vec{b}|=|\vec{a}||\vec{b}|\sin\theta</script><p>注意，叉积与点积不同，以上定义不能轻易扩展到n维，只适用于3维向量。<br><br>向量叉积示意图:<br><img src="/2018/08/04/coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="[title]"><br>向量叉积产生一个新的向量，该向量与原来的两个向量垂直(正交)，方向满足右手定则。  </p>
+<p>由叉积公式可以知道，如果$\vec{a}$, $\vec{b}$平行，则:  </p>
+<script type="math/tex; mode=display">
+\vec{a}\times\vec{b}=\vec{0}</script><p>向量叉积性质:  </p>
+<script type="math/tex; mode=display">
+\vec{a}\times\vec{b}=-(\vec{b}\times\vec{a})</script><script type="math/tex; mode=display">
+(k\vec{a})\times\vec{b}=k(\vec{a}\times\vec{b})</script><script type="math/tex; mode=display">
+\vec{a}\times(\vec{b}+\vec{c})=\vec{a}\times\vec{b}+\vec{a}\times\vec{c}</script><script type="math/tex; mode=display">
+\vec{a}\times\vec{a}=\vec{0}</script><script type="math/tex; mode=display">
+(\vec{a}\times\vec{b})\cdot\vec{c}=(\vec{c}\times\vec{a})\cdot\vec{b}=(\vec{b}\times\vec{c})\cdot\vec{a}</script><script type="math/tex; mode=display">
+\vec{a}\times(\vec{b}\times\vec{a})=\vec{a}\times\vec{b}\times\vec{a}=|\vec{a}|^2\vec{b}-(\vec{a}\cdot\vec{b})\vec{a}</script><h4 id="1-2-矩阵"><a href="#1-2-矩阵" class="headerlink" title="1.2 矩阵"></a>1.2 矩阵</h4><p>矩阵性质:  </p>
+<script type="math/tex; mode=display">
+\mathbf{F}+\mathbf{G}=\mathbf{G}+\mathbf{F}</script><script type="math/tex; mode=display">
+(\mathbf{F}+\mathbf{G})+\mathbf{H}=\mathbf{F}+(\mathbf{G}+\mathbf{H})</script><script type="math/tex; mode=display">
+k(s\mathbf{F})=(ks)\mathbf{F}</script><script type="math/tex; mode=display">
+k(\mathbf{F}+\mathbf{G})=k\mathbf{F}+k\mathbf{G}</script><script type="math/tex; mode=display">
+(k+s)\mathbf{F}=k\mathbf{F}+s\mathbf{F}</script><script type="math/tex; mode=display">
+(k\mathbf{F})\mathbf{G}=k(\mathbf{F}\mathbf{G})</script><script type="math/tex; mode=display">
+(\mathbf{F}\mathbf{G})\mathbf{H}=\mathbf{F}(\mathbf{G}\mathbf{H})</script><script type="math/tex; mode=display">
+(\mathbf{F}\mathbf{G})^T=\mathbf{G}^T\mathbf{F}^T</script><script type="math/tex; mode=display">
+\mathbf{F}\mathbf{F}^{-1}=\mathbf{F}^{-1}\mathbf{F}=\mathbf{I}</script><script type="math/tex; mode=display">
+(\mathbf{F}\mathbf{G})^{-1}=\mathbf{G}^{-1}\mathbf{F}^{-1}</script><script type="math/tex; mode=display">
+|\mathbf{F}\mathbf{G}|=|\mathbf{F}||\mathbf{G}|</script><script type="math/tex; mode=display">
+\exists\mathbf{F}^{-1}\iff|\mathbf{F}|\neq0</script><p>矩阵$\mathbf{F_{n\times n}}$有特征值:  </p>
+<script type="math/tex; mode=display">
+\lambda_1,\lambda_2,\dots\lambda_n</script><p><br>特征向量:  </p>
+<script type="math/tex; mode=display">
+\vec{v}_1,\vec{v}_2,\dots,\vec{v}_n</script><p>由特征向量组成的矩阵:</p>
+<script type="math/tex; mode=display">
+\mathbf{A}=[\vec{v}_1,\vec{v}_2,\dots,\vec{v}_n]</script><p>则:  </p>
+<script type="math/tex; mode=display">
+\mathbf{F}\vec{v}_i=\lambda_i\vec{v}_i</script><script type="math/tex; mode=display">
+\mathbf{A}^{-1}F\mathbf{A}=\begin{pmatrix}\lambda_1 & 0 & \cdots & 0\\
+0 & \lambda_2 & \cdots & 0\\\vdots & \vdots & \ddots & \vdots\\0 & 0 & \cdots & \lambda_n\end{pmatrix}</script>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkfgw0vh0000c0r5za18vvlt" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkfiwcl8000018r5fp6emsft" class="article-share-link">Share</a>
       
       
     </footer>
@@ -181,7 +216,7 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkfgw0vm0002c0r5tt2r7x03" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkfiwcll000318r53n9dzbt1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -274,5 +309,20 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
 
 
   </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
