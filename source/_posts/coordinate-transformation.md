@@ -2,8 +2,16 @@
 title: 图形学中的坐标变换
 date: 2018-08-04 11:23:34
 categories: 图形学
-mathjax: true
 ---
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
 从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。
 
 ## 1. 数学知识
@@ -47,7 +55,7 @@ $$
 |\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}
 $$
 
-范数的性质
+范数的性质:
 
 $$
 |k\vec{a}|=|k|||\vec{a}|
@@ -57,7 +65,7 @@ $$
 |\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|
 $$
 
-向量的点积  
+向量的点积:  
 
 $$
 \vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n
@@ -77,7 +85,7 @@ $$
 \vec{a}\cdot\vec{b}=0
 $$
 
-点积的性质
+点积的性质:
 
 $$
 \vec{a}\cdot\vec{b}=\vec{b}\cdot\vec{a}
