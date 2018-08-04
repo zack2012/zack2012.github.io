@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>图形学中的坐标变换 | Lowe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图形学中的坐标变换">
+<meta property="og:url" content="https://loweyu.com/2018/08/04/coordinate-transformation/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/coordinate-transformation/dotProduct.001.jpg">
+<meta property="og:updated_time" content="2018-08-04T09:55:58.315Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图形学中的坐标变换">
+<meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
+<meta name="twitter:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/coordinate-transformation/dotProduct.001.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Lowe" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Lowe</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://loweyu.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-coordinate-transformation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/04/coordinate-transformation/" class="article-date">
+  <time datetime="2018-08-04T03:23:34.000Z" itemprop="datePublished">2018-08-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/图形学/">图形学</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      图形学中的坐标变换
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
+<h2 id="数学知识"><a href="#数学知识" class="headerlink" title="数学知识"></a>数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
+<h4 id="1-向量"><a href="#1-向量" class="headerlink" title="1. 向量"></a>1. 向量</h4><script type="math/tex; mode=display">
+\vec{a}+\vec{b}=\vec{b}+\vec{a}</script><script type="math/tex; mode=display">
+(\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c})</script><script type="math/tex; mode=display">
+(kt)\vec{a}=k(t\vec{a})</script><script type="math/tex; mode=display">
+k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=display">
+(s+t)\vec{a}=s\vec{a}+t\vec{a}</script><p>设</p>
+<script type="math/tex; mode=display">
+\vec{a}=(a_1,a_2,a_3,\dots,a_n)</script><script type="math/tex; mode=display">
+\vec{b}=(b_1,b_2,b_3,\dots,b_n)</script><p>则向量的长度定义为：  </p>
+<script type="math/tex; mode=display">
+|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>范数的性质</p>
+<script type="math/tex; mode=display">
+|k\vec{a}|=|k|||\vec{a}|</script><script type="math/tex; mode=display">
+|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量的点积  </p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n</script><script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示：<br><img src="coordinate-transformation/dotProduct.001.jpg" alt="dotproduct"><br>由上面的公式可以知道，如果两个向量垂直(正交)，则  </p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=0</script><p>点积的性质</p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=\vec{b}\cdot\vec{a}</script><script type="math/tex; mode=display">
+(k\vec{a})\cdot\vec{b}=k(\vec{a}\cdot\vec{b})</script><script type="math/tex; mode=display">
+\vec{a}\cdot(\vec{b}+\vec{c})=\vec{a}\cdot\vec{b}+\vec{a}\cdot\vec{c}</script><script type="math/tex; mode=display">
+\vec{a}\cdot\vec{a}=|\vec{a}|^2</script><script type="math/tex; mode=display">
+|\vec{a}\cdot\vec{b}|\leq|\vec{a}||\vec{b}|</script>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkeusmjj0004e0fyndmgsjrg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/07/08/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">回顾过去，展望未来</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/图形学/">图形学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/04/coordinate-transformation/">图形学中的坐标变换</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/08/hello-world/">回顾过去，展望未来</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 lowe<br>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

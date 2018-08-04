@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Lowe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don&apos;t lose hope">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lowe">
+<meta property="og:url" content="https://loweyu.com/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don&apos;t lose hope">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lowe">
+<meta name="twitter:description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don&apos;t lose hope">
+  
+    <link rel="alternate" href="/atom.xml" title="Lowe" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Lowe</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://loweyu.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-coordinate-transformation" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/04/coordinate-transformation/" class="article-date">
+  <time datetime="2018-08-04T03:23:34.000Z" itemprop="datePublished">2018-08-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/图形学/">图形学</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/04/coordinate-transformation/">图形学中的坐标变换</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
+<h2 id="数学知识"><a href="#数学知识" class="headerlink" title="数学知识"></a>数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
+<h4 id="1-向量"><a href="#1-向量" class="headerlink" title="1. 向量"></a>1. 向量</h4><script type="math/tex; mode=display">
+\vec{a}+\vec{b}=\vec{b}+\vec{a}</script><script type="math/tex; mode=display">
+(\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c})</script><script type="math/tex; mode=display">
+(kt)\vec{a}=k(t\vec{a})</script><script type="math/tex; mode=display">
+k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=display">
+(s+t)\vec{a}=s\vec{a}+t\vec{a}</script><p>设</p>
+<script type="math/tex; mode=display">
+\vec{a}=(a_1,a_2,a_3,\dots,a_n)</script><script type="math/tex; mode=display">
+\vec{b}=(b_1,b_2,b_3,\dots,b_n)</script><p>则向量的长度定义为：  </p>
+<script type="math/tex; mode=display">
+|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>范数的性质</p>
+<script type="math/tex; mode=display">
+|k\vec{a}|=|k|||\vec{a}|</script><script type="math/tex; mode=display">
+|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量的点积  </p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n</script><script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示：<br><img src="coordinate-transformation/dotProduct.001.jpg" alt="dotproduct"><br>由上面的公式可以知道，如果两个向量垂直(正交)，则  </p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=0</script><p>点积的性质</p>
+<script type="math/tex; mode=display">
+\vec{a}\cdot\vec{b}=\vec{b}\cdot\vec{a}</script><script type="math/tex; mode=display">
+(k\vec{a})\cdot\vec{b}=k(\vec{a}\cdot\vec{b})</script><script type="math/tex; mode=display">
+\vec{a}\cdot(\vec{b}+\vec{c})=\vec{a}\cdot\vec{b}+\vec{a}\cdot\vec{c}</script><script type="math/tex; mode=display">
+\vec{a}\cdot\vec{a}=|\vec{a}|^2</script><script type="math/tex; mode=display">
+|\vec{a}\cdot\vec{b}|\leq|\vec{a}||\vec{b}|</script>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkeusmjj0004e0fyndmgsjrg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/08/hello-world/" class="article-date">
+  <time datetime="2018-07-08T11:14:34.000Z" itemprop="datePublished">2018-07-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/08/hello-world/">回顾过去，展望未来</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>入坑iOS已经快4年了，从一个一无所知的新手小白，到现在的熟练搬砖码农。回顾下这4年的经历，为自己以后发展定下方向。</p>
+<h2 id="过去"><a href="#过去" class="headerlink" title="过去"></a>过去</h2><p>入坑iOS确实很偶然。2014年夏天，发生了一些事促使我下定决心转行做程序员，经过一段时间的调研，选择的方向是前端开发，原因很简单，觉得相对于后端，前端更容易入门，而且当时觉得先入门前端，以后在转后端比直接跨行转后端会容易的多，不得不说，这个想法天真了。</p>
+<p>经过两个月的自学，在过完国庆节后，提交了辞职报告，正式开始找工作。说来也巧，那时刚好快到老婆生日了，决定买个Mac pro送给老婆当生日礼物，结果买回来后自己却玩的飞起，对iPhone也非常感兴趣，刚好苹果当时发布了新的编程语言Swift，于是决定不找前端工作了，转iOS开发。</p>
+<p>自学iOS只花了一个月的时间，对着书本用Objective-C敲一遍，在用Swift敲一遍，当时的Swift与现在比起来实在太烂了，有些功能甚至不用Objective-C根本无法完成。很多人认为Swift变的太快，太坑，但我觉得Swift如果不这么做的话，只会更坑，可能还没入场就被抬出场外了。关于Swift，以后会单独写一篇文章介绍。</p>
+<p>找工作还算顺利，12月初就开始了自己正式的iOS码农生涯。</p>
+<h2 id="现在"><a href="#现在" class="headerlink" title="现在"></a>现在</h2><p>回顾过去的4年，我觉得自己iOS开发相关的知识(狭义)早在两年前就停滞不前了，在开始的2年内，我几乎阅读了苹果所的programming guide和出名的iOS blog，wwdc视频也从2011年看起，这让我进步神速，对整个iOS开发有了系统的认识。在开始的第1年，就有工作4、5年的同事向我请教问题，到了第2年，我已经习惯回答各种各样的问题，领导也放心把核心需求交给我开发。不夸张的说，头两年真是最幸福的两年，每天都有一堆guide、文章要看，生活相当充实。</p>
+<p>后两年，我觉得个人成长主要集中在计算机基础和编程功底上。因为前两年的基础，iOS方面基本已经没什么可看的，自然而然开始把目光转向了自己的软肋-计算机基础，毕竟不是科班出身，改补的还是要补，操作系统、网络编程、多线程编程、算法等等。同时也开始更加注意自己的编程水平以及习惯，代码复用、稳定性、如何设计接口。编程技术不是可以靠看书快速积累的，只能靠一一行代码堆积起来，多写多反思。</p>
+<h2 id="未来"><a href="#未来" class="headerlink" title="未来"></a>未来</h2><p>现在的移动开发有点像当年的windows桌面开发。google也从 mobile first 转向 AI first。更加有意思的是，iOS开发应该已经没有新人了，同事告诉我，今年参加公司的校招面试，两人加起来一共面试了25人，一个iOS开发也没有，都是安卓的，而且这些来面安卓的水平非常一般，对移动开发也没啥兴趣，可能就是在实验室里做了导师安排的一些项目。</p>
+<p>所以到了现在必须给自己定下方向的时候，没有方向，未来自己只可能虚度光阴、原地踏步。这个问题我也思考了快一年了，期间尝试过多个方向，最终选择了AR/VR方向，理由也很简单：兴趣、前景。</p>
+<p>给自己定的第一阶段的目标是学习图形学相关知识，开发AR/VR应用，需要从2D转向3D，图形学是绕不开的，同时学习图形学需要大量的时间(图形学的书真是又厚又难懂)，趁现在AR/VR没有爆发，学习图形学相关知识正是时候，打下坚实的基础，迎接未来的挑战。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkeumew00000e0fyhpit4qcc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/图形学/">图形学</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/杂谈/">杂谈</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/08/04/coordinate-transformation/">图形学中的坐标变换</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/08/hello-world/">回顾过去，展望未来</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 lowe<br>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
