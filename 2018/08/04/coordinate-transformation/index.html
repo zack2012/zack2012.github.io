@@ -7,19 +7,19 @@
   
   <title>图形学中的坐标变换 | Lowe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
+  <meta name="description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
 <meta property="og:type" content="article">
 <meta property="og:title" content="图形学中的坐标变换">
 <meta property="og:url" content="https://loweyu.com/2018/08/04/coordinate-transformation/index.html">
 <meta property="og:site_name" content="Lowe">
-<meta property="og:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
+<meta property="og:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/coordinate-transformation/dotProduct.001.jpg">
-<meta property="og:updated_time" content="2018-08-04T09:55:58.315Z">
+<meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
+<meta property="og:updated_time" content="2018-08-04T12:52:36.599Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
-<meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1. 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c}">
-<meta name="twitter:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/coordinate-transformation/dotProduct.001.jpg">
+<meta name="twitter:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
+<meta name="twitter:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
   
     <link rel="alternate" href="/atom.xml" title="Lowe" type="application/atom+xml">
   
@@ -92,12 +92,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+        <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
 </script>
 
 <p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
-<h2 id="数学知识"><a href="#数学知识" class="headerlink" title="数学知识"></a>数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
-<h4 id="1-向量"><a href="#1-向量" class="headerlink" title="1. 向量"></a>1. 向量</h4><script type="math/tex; mode=display">
+<h2 id="1-数学知识"><a href="#1-数学知识" class="headerlink" title="1. 数学知识"></a>1. 数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
+<h4 id="1-1-向量"><a href="#1-1-向量" class="headerlink" title="1.1 向量"></a>1.1 向量</h4><script type="math/tex; mode=display">
 \vec{a}+\vec{b}=\vec{b}+\vec{a}</script><script type="math/tex; mode=display">
 (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c})</script><script type="math/tex; mode=display">
 (kt)\vec{a}=k(t\vec{a})</script><script type="math/tex; mode=display">
@@ -107,15 +112,17 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
 \vec{a}=(a_1,a_2,a_3,\dots,a_n)</script><script type="math/tex; mode=display">
 \vec{b}=(b_1,b_2,b_3,\dots,b_n)</script><p>则向量的长度定义为：  </p>
 <script type="math/tex; mode=display">
-|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>范数的性质</p>
+|\vec{a}|=\sqrt{a_1^2+a_2^2+a_3^2+\cdots+a_n^2}</script><p>范数的性质:</p>
 <script type="math/tex; mode=display">
 |k\vec{a}|=|k|||\vec{a}|</script><script type="math/tex; mode=display">
-|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量的点积  </p>
+|\vec{a}+\vec{b}|\leq|\vec{a}|+|\vec{b}|</script><p>向量的点积:  </p>
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n</script><script type="math/tex; mode=display">
-\vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示：<br><img src="coordinate-transformation/dotProduct.001.jpg" alt="dotproduct"><br>由上面的公式可以知道，如果两个向量垂直(正交)，则  </p>
+\vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示:  </p>
+<p><img src="/2018/08/04/coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="[title]">  </p>
+<p>由点积的公式可以知道，如果两个向量垂直(正交)，则  </p>
 <script type="math/tex; mode=display">
-\vec{a}\cdot\vec{b}=0</script><p>点积的性质</p>
+\vec{a}\cdot\vec{b}=0</script><p>点积的性质:</p>
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=\vec{b}\cdot\vec{a}</script><script type="math/tex; mode=display">
 (k\vec{a})\cdot\vec{b}=k(\vec{a}\cdot\vec{b})</script><script type="math/tex; mode=display">
@@ -125,7 +132,7 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkeusmjj0004e0fyndmgsjrg" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkfgtval00007dr5aaayzmmk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -226,5 +233,20 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
 
 
   </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
