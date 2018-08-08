@@ -109,6 +109,18 @@ $$
 \vec{a}\times\vec{b}=(a_2b_3-a_3b_2,a_3b_1-a_1b_3,a_1b_2-a_2b_1)
 $$  
 
+向量$\vec{a}$定义的反对称矩阵:  
+
+$$
+\mathbf{A}=\begin{pmatrix}0 & -a_3 & a_2\\
+a_3 & 0 & -a_1\\ -a_2 & a_1 & 0 \\\end{pmatrix}
+$$
+则:  
+
+$$
+\vec{a}\times\vec{b} = \mathbf{A}\vec{b}
+$$  
+
 $$
 |\vec{a}\times\vec{b}|=|\vec{a}||\vec{b}|\sin\theta
 $$
