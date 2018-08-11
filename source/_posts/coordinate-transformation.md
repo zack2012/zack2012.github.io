@@ -356,3 +356,142 @@ $$
 通过以上介绍可以知道，从3维空间到2维空间的坐标变换是一步一步串联起来的，每一步都对应着一个坐标空间。完整的流程如下图所示:  
 
 <img src="coordinate-transformation/transform.jpg" width="400px" height="150px" alt="坐标变换" title="坐标变换">  
+
+## 3. 坐标变换
+
+复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍最基本的三种坐标变换：缩放、平移、旋转
+
+#### 3.1 缩放  
+
+缩放可以用以下矩阵表示:  
+
+$$
+scale=\begin{pmatrix}
+s_x & 0   & 0   & 0\\
+0   & s_y & 0   & 0\\
+0   & 0   & s_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+$$  
+
+$s_x$, $s_y$, $s_z$可以为负值，如果是负值就是对某个平面的反射。变换示意图如下:  
+<img src="coordinate-transformation/scale.jpg" width="400px" height="150px" alt="缩放" title="缩放">  
+
+下面我们推导沿任意三个方向($\vec{u}$,$\vec{v}$,$\vec{w}$)缩放($a$,$b$,$c$)的公式.  
+
+首先从($\vec{x}$,$\vec{y}$,$\vec{z}$)坐标系变换到($\vec{u}$,$\vec{v}$,$\vec{w}$)坐标系，可以由下面矩阵完成:  
+
+$$
+\begin{pmatrix}
+u_x & v_x & w_x & 0\\
+u_y & v_y & w_y & 0\\
+u_z & v_z & w_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}^{-1}
+$$
+
+接着在($\vec{u}$,$\vec{v}$,$\vec{w}$)下缩放($a$,$b$,$c$):  
+
+$$
+\begin{pmatrix}
+a   & 0   & 0   & 0\\
+0   & b   & 0   & 0\\
+0   & 0   & c   & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+$$
+
+最后从($\vec{u}$,$\vec{v}$,$\vec{w}$)坐标系变换回($\vec{x}$,$\vec{y}$,$\vec{z}$)坐标系:  
+
+$$
+\begin{pmatrix}
+u_x & v_x & w_x & 0\\
+u_y & v_y & w_y & 0\\
+u_z & v_z & w_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+$$
+
+将这三个矩阵相乘就可以得到最终的矩阵:  
+
+$$
+M=\begin{pmatrix}
+u_x & v_x & w_x & 0\\
+u_y & v_y & w_y & 0\\
+u_z & v_z & w_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+a   & 0   & 0   & 0\\
+0   & b   & 0   & 0\\
+0   & 0   & c   & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+u_x & v_x & w_x & 0\\
+u_y & v_y & w_y & 0\\
+u_z & v_z & w_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}^{-1}
+$$
+
+利用上面的公式，我们来求解沿单位向量$\vec{n}$缩放，缩放系数为$k$的变换矩阵。设: 
+
+$$
+\vec{n}=(n_x,n_y,n_z)
+$$
+
+$$
+n_{x}^2+n_{y}^2+n_{z}^2=1
+$$
+
+
+为了利用公式，我们需要通过$\vec{n}$创建一个坐标系，我们可以利用观察空间章节里的方法创建坐标系，指定:  
+
+$$
+\vec{v}_{up}=(0,1,0)
+$$
+
+则:  
+
+$$
+\vec{u}=\vec{v}_{up}\times\vec{n}=(n_z,0,-n_x)
+$$
+
+$$
+\vec{v}=\vec{n}\times\vec{u}=(-n_xn_y,n_x^{2}+n_z^{2},-n_yn_z)
+$$
+
+将$\vec{u}$,$\vec{v}$,$\vec{n}$带入公式:  
+
+$$
+M=
+\begin{pmatrix}
+n_z  & -n_xn_y         & n_x & 0\\
+0    & n_x^{2}+n_z^{2} & n_y & 0\\
+-n_x & -n_yn_z         & n_z & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+1   & 0   & 0   & 0\\
+0   & 1   & 0   & 0\\
+0   & 0   & k   & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+\begin{pmatrix}
+n_z  & -n_xn_y         & n_x & 0\\
+0    & n_x^{2}+n_z^{2} & n_y & 0\\
+-n_x & -n_yn_z         & n_z & 0\\
+0    & 0               & 0   & 1\\
+\end{pmatrix}^{-1}
+$$
+
+$$
+=
+\begin{pmatrix}
+1+(k-1)n_x^2  & (k-1)n_xn_y & (k-1)n_xn_z & 0\\
+(k-1)n_xn_y   & 1+(k-1)n_y^{2} & (k-1)n_yn_z & 0\\
+(k-1)n_xn_z & (k-1)n_yn_z         & 1+(k-1)n_z^2 & 0\\
+0   & 0   & 0   & 1\\
+\end{pmatrix}
+$$
