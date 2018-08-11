@@ -359,7 +359,7 @@ $$
 
 ## 3. 坐标变换
 
-复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍最基本的三种坐标变换：缩放、平移、旋转
+复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍最基本的三种坐标变换：缩放、旋转、平移。
 
 #### 3.1 缩放  
 
@@ -446,7 +446,7 @@ n_{x}^2+n_{y}^2+n_{z}^2=1
 $$
 
 
-为了利用公式，我们需要通过$\vec{n}$创建一个坐标系，我们可以利用观察空间章节里的方法创建坐标系，指定:  
+为了利用公式，我们需要通过$\vec{n}$创建一个坐标系，我们可以利用观察空间小节里的方法创建坐标系，指定:  
 
 $$
 \vec{v}_{up}=(0,1,0)
@@ -487,11 +487,143 @@ n_z  & -n_xn_y         & n_x & 0\\
 $$
 
 $$
-=
+M=
 \begin{pmatrix}
 1+(k-1)n_x^2  & (k-1)n_xn_y & (k-1)n_xn_z & 0\\
 (k-1)n_xn_y   & 1+(k-1)n_y^{2} & (k-1)n_yn_z & 0\\
 (k-1)n_xn_z & (k-1)n_yn_z         & 1+(k-1)n_z^2 & 0\\
 0   & 0   & 0   & 1\\
+\end{pmatrix}
+$$
+
+#### 3.1 旋转
+
+确定一个3维空间里的旋转需要3个变量:  
+1. 不动点，旋转前后位置保持不变。
+2. 绕哪个向量旋转。
+3. 旋转角度。从向量的顶部向尾部看去，逆时针为正值，顺时针为负值。
+
+我们先考察最简单的情形：不动点为坐标原点，绕z轴旋转。如下图所示:  
+
+<img src="coordinate-transformation/rotate.jpg" width="200px" height="150px" alt="旋转变换" title="旋转变换">  
+
+从上图已知: 
+
+$$
+\vec{x'}=(\cos\theta, \sin\theta, 0, 0)
+$$
+
+$$
+\vec{y'}=(-\sin\theta, \cos\theta, 0, 0)
+$$
+
+所以绕$z$轴旋转$\theta$的变换矩阵为: 
+
+$$
+Rotate_z(\theta)=
+\begin{pmatrix}
+\cos\theta & -\sin\theta & 0 & 0\\
+\sin\theta & \cos\theta  & 0 & 0\\
+0          & 0             & 1 & 0\\
+0          & 0             & 0 & 1
+\end{pmatrix}
+$$
+
+同理，我们可以得到绕$x$,$y$轴的旋转矩阵:  
+
+$$
+Rotate_x(\theta)=
+\begin{pmatrix}
+1          & 0           & 0           & 0\\
+0          &\cos\theta   & -\sin\theta & 0\\
+0          & \sin\theta  & \cos\theta  & 0\\
+0          & 0           & 0           & 1
+\end{pmatrix}
+$$
+
+$$
+Rotate_y(\theta)=
+\begin{pmatrix}
+\cos\theta  & 0           & \sin\theta & 0\\
+0           & 1           & 0          & 0\\
+-\sin\theta & 0           & \cos\theta & 0\\
+0           & 0           & 0 & 1
+\end{pmatrix}
+$$
+
+下面我们推导不动点为原点，绕单位向量$\vec{A}$旋转$\theta$的变换公式，如下图所示:  
+
+<img src="coordinate-transformation/rotateAny.jpg" width="180px" height="250px" alt="旋转变换" title="旋转变换">  
+
+将$\vec{P}$分解为垂直$\vec{A}$与平行$\vec{A}$的两个分量，旋转不影响平行分量，只影响垂直分量。旋转后的垂直分量为:  
+
+$$
+\vec{P_v}=(\vec{P}-(\vec{A}\cdot\vec{P})\vec{A})\cos\theta+\vec{A}\times\vec{P}\sin\theta
+$$
+
+$$
+\vec{P'}=\vec{P}_{v}+(\vec{A}\cdot\vec{P})\vec{A}
+$$
+
+$$
+\vec{P'}=\cos\theta\vec{P}+\sin\theta\vec{A}\times\vec{P}+(1-\cos\theta)(\vec{A}\cdot\vec{P})\vec{A}
+$$
+
+由前面的数学知识可知:  
+
+$$
+\vec{A}\times\vec{P}=
+\begin{pmatrix}
+0 & -A_z & A_y\\
+A_z & 0 & -A_x\\
+-A_y & A_x & 0
+\end{pmatrix}\vec{P}
+$$
+
+$$
+(\vec{A}\cdot\vec{P})\vec{A}=\vec{A}(\vec{A}\cdot\vec{P})=\vec{A}(\vec{A}^T\vec{P})=\vec{A}\vec{A}^T\vec{P}
+$$
+
+$$
+(\vec{A}\cdot\vec{P})\vec{A}=
+\begin{pmatrix}
+A_x^2 & A_xA_y & A_xA_z\\
+A_xA_y & A_y^2 & A_yA_z\\
+A_xA_z & A_yA_z & A_z^2
+\end{pmatrix}\vec{P}
+$$  
+
+带入后得到: 
+
+$$
+Rotate_{\vec{A}}(\theta)=
+\begin{pmatrix}
+c+(1-c)A_x^2 & (1-c)A_xA_y-sA_z & (1-c)A_xA_z+sA_y\\
+(1-c)A_xA_y+s A_z & c+(1-c)A_y^2 & (1-c)A_yA_z-s A_x\\
+(1-c)A_xA_z-s A_y & (1-c)A_yA_z+s A_x & c+(1-c)A_z^2
+\end{pmatrix}
+$$  
+
+其中:
+
+$$
+c=\cos\theta
+$$
+
+$$
+s=\sin\theta
+$$  
+
+#### 3.3 平移
+
+平移变换非常简单，公式如下: 
+
+$$
+T=
+\begin{pmatrix}
+1 & 0 & 0 & T_x\\
+0 & 1 & 0 & T_y\\
+0 & 0 & 1 & T_z\\
+0 & 0 & 0 & 1
 \end{pmatrix}
 $$
