@@ -705,3 +705,280 @@ T=
 0 & 0 & 0 & 1
 \end{pmatrix}
 $$
+
+
+#### 3.5 透视变换
+
+推导透视变换前，我们先推到从任意一个长方体变换为另一个长方体的公式，变换前后每个顶点一一对应
+
+长方体只要通过两个顶点就可以唯一确定，设这两个顶点为:
+
+$$
+(x_l,y_l,z_l)
+$$
+
+$$
+(x_h,y_h,z_h)
+$$
+
+变换后对应的顶点为:
+
+$$
+(x'_l,y'_l,z'_l)
+$$
+
+$$
+(x'_h,y'_h,z'_h)
+$$
+
+由前面几个小节的可知，这个变换可以通过平移、缩放完成，变换的过程如下图所示:
+
+<img src="coordinate-transformation/cube.jpg" width="500px" height="500px" alt="立方体变换" title="立方体变换">  
+
+所以变换矩阵为: 
+
+$$
+M=
+\begin{pmatrix}
+1 & 0 & 0 & x'_l\\
+0 & 1 & 0 & y'_l\\
+0 & 0 & 1 & z'_l\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+\frac{x'_h-x'_l}{x_h-x_l} & 0 & 0 & 0\\
+0 & \frac{y'_h-y'_l}{y_h-y_l} & 0 & 0\\
+0 & 0 & \frac{z'_h-z'_l}{z_h-z_l} & 0\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\begin{pmatrix}
+1 & 0 & 0 & -x_l\\
+0 & 1 & 0 & -y_l\\
+0 & 0 & 1 & -z_l\\
+0 & 0 & 0 & 1
+\end{pmatrix}
+$$
+
+化简得:  
+
+$$
+M=
+\left(
+\begin{array}{cccc}
+ \frac{x_h'-x_l'}{x_h-x_l} & 0 & 0 & \frac{x_h x_l'-x_l x_h'}{x_h-x_l} \\
+ 0 & \frac{y_h'-y_l'}{y_h-y_l} & 0 & \frac{y_h y_l'-y_l y_h'}{y_h-y_l} \\
+ 0 & 0 & \frac{z_h'-z_l'}{z_h-z_l} & \frac{z_h z_l'-z_l z_h'}{z_h-z_l} \\
+ 0 & 0 & 0 & 1 \\
+\end{array}
+\right)
+$$
+
+透视变换由3部分组成，投影中心，投影平面和被投影物体。将投影中心和被投影物体(相连，与投影平面所交的点就是投影点。
+
+我们按如下规则建立坐标系：投影中心是坐标系的原点，投影平面平行与z轴且在z轴的负半部分，投影中心到投影平面的距离为$d$($d>0$)，如下图所示: 
+
+<img src="coordinate-transformation/perspect.jpg" width="600px" height="188px" alt="立方体变换" title="立方体变换">  
+
+由上图可知，投影点与被投影点有如下关系:
+
+$$
+x_p=\frac{d}{-z}x
+$$
+
+$$
+y_p=\frac{d}{-z}y
+$$
+
+$$
+z_p=-d
+$$
+
+$(x_p,y_p,z_p)$对应的齐次坐标为:
+
+$$
+(-zx_p,-zy_p,dz,-z)=(dx,dy,dz,-z)
+$$
+
+写成矩阵的形式:  
+
+$$
+P_p=\begin{pmatrix}
+d & 0 & 0 & 0\\
+0 & d & 0 & 0\\
+0 & 0 & d & 0\\
+0 & 0 & -1 & 0\\
+\end{pmatrix}P
+$$
+
+并不是所有的物体都会在最后图像里显示出来，只有在一定范围内的物体会被显示，这个范围在观察空间是一个截头锥体(frustum)，也被称为视见体，如下图所示:
+
+<img src="coordinate-transformation/frustum.jpg" width="400px" height="180px" alt="视见体" title="视见体"> 
+
+视见体可以由6个参数确定:
+
+$$
+(l,r,b,t,-n,-f)
+$$
+
+两个平行于z轴的面称为近裁剪面和远裁剪面，到原点的距离分别为$n$,$f$
+$l$,$r$为近裁剪面左右两条边的x轴坐标，$t$,$b$为近裁剪面上下两条边的y轴坐标。
+
+在图形学中，一般把近裁剪面设置为投影平面，则$d=n$。
+
+上面我们得到了透视投影的矩阵，但这个矩阵丢失了所有z轴坐标，我们希望透视矩阵具有如下性质:  
+1. 在视见体内，z轴的相对大小保持不变，即$z_1<z_2$，变换后仍然有$z_1'<z_2'$
+2. 近、远裁剪面上的点的z轴坐标保持不变。即$z_1=-n,z_2=-f$，变换后仍为$z_1'=-n,z_2'=-f$
+
+我们设该矩阵为:
+
+$$
+M=\begin{pmatrix}
+n & 0 & 0 & 0\\
+0 & n & 0 & 0\\
+0 & 0 & \alpha & \beta\\
+0 & 0 & -1 & 0\\
+\end{pmatrix}
+$$
+
+根据条件2，我们可以得到如下方程组: 
+
+$$
+\begin{cases}
+-\alpha+\frac{\beta}{n}=-n \\
+-\alpha+\frac{\beta}{f}=-f \\
+\end{cases}
+$$
+
+解方程组可得:  
+
+$$
+\begin{cases}
+\alpha=f+n \\
+\beta=fn \\
+\end{cases}
+$$
+
+现在我们证明所得矩阵满足条件1，变换后得z轴坐标为:  
+
+$$
+z'=-(f+n)-\frac{fn}{z}
+$$
+
+$$
+z'_1-z'_2=\frac{fn}{z_2}-\frac{fn}{z_1}
+$$
+
+因为
+
+$$
+n>0,f>0,z_1<z_2,z_1<0,z_2<0
+$$
+
+所以
+
+$$
+z_1'<z_2'
+$$
+
+满足条件1。因此得到透视矩阵为:
+
+$$
+M=\begin{pmatrix}
+n & 0 & 0 & 0\\
+0 & n & 0 & 0\\
+0 & 0 & f+n & fn\\
+0 & 0 & -1 & 0\\
+\end{pmatrix}
+$$
+
+视见体经过上面的矩阵变换后得到是一个长方体，如下图所示:  
+
+<img src="coordinate-transformation/frustumTocube.jpg" width="400px" height="180px" alt="透视变换" title="透视变换"> 
+
+根据2.4节可知，我们还需要把刚才得到长方体变换为规范视见体(Canonical View Volume)。
+在图形学中，我们把近裁剪面变换到$z=-1$平面，把远裁剪面变换到$z=1$平面上。因此为了套用上面得到的长方体变换公式，我们需要先对z轴做一次反射，即乘以下面这个矩阵:
+
+$$
+\begin{pmatrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & -1 & 0\\
+0 & 0 & 0 & 0\\
+\end{pmatrix}
+$$
+
+经过透视矩阵、反射矩阵变换后得到的长方体坐标为: 
+
+$$
+x_l=l
+$$
+
+$$
+x_r=r
+$$
+
+$$
+y_l=b
+$$
+
+$$
+y_h=t
+$$
+
+$$
+z_l=n
+$$
+
+$$
+z_h=f
+$$
+
+因此可以得到长方体变换矩阵: 
+
+$$
+\left(
+\begin{array}{cccc}
+ \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\
+ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\
+ 0 & 0 & \frac{2}{f-n} & -\frac{f+n}{f-n} \\
+ 0 & 0 & 0 & 1 \\
+\end{array}
+\right)
+$$
+
+最后将三个矩阵相乘，我们就得到了从观察空间的截头锥体变换为规范视见体(Canonical View Volume)的矩阵:  
+
+$$
+M=
+\left(
+\begin{array}{cccc}
+ \frac{2}{r-l} & 0 & 0 & -\frac{l+r}{r-l} \\
+ 0 & \frac{2}{t-b} & 0 & -\frac{b+t}{t-b} \\
+ 0 & 0 & \frac{2}{f-n} & -\frac{f+n}{f-n} \\
+ 0 & 0 & 0 & 1 \\
+\end{array}
+\right)
+\begin{pmatrix}
+1 & 0 & 0 & 0\\
+0 & 1 & 0 & 0\\
+0 & 0 & -1 & 0\\
+0 & 0 & 0 & 0\\
+\end{pmatrix}
+\begin{pmatrix}
+n & 0 & 0 & 0\\
+0 & n & 0 & 0\\
+0 & 0 & f+n & fn\\
+0 & 0 & -1 & 0\\
+\end{pmatrix}
+$$
+
+$$
+M=\left(
+\begin{array}{cccc}
+ \frac{2 n}{r-l} & 0 & \frac{l+r}{r-l} & 0 \\
+ 0 & \frac{2 n}{t-b} & \frac{b+t}{t-b} & 0 \\
+ 0 & 0 & -\frac{f+n}{f-n} & -\frac{2 f n}{f-n} \\
+ 0 & 0 & -1 & 0 \\
+\end{array}
+\right)
+$$
