@@ -982,3 +982,7 @@ M=\left(
 \end{array}
 \right)
 $$
+
+下图显示了将观察空间里的z轴如何映射到裁剪空间:
+
+<img src="coordinate-transformation/map.jpg" width="400px" height="283px" alt="透视变换" title="透视变换"> 
