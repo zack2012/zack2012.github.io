@@ -1,3 +1,4 @@
+
 (function($){
   // Search
   var $searchWrap = $('#search-form-wrap'),
