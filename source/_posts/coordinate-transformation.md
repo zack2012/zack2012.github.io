@@ -3,12 +3,6 @@ title: 图形学中的坐标变换
 date: 2018-08-04 11:23:34
 categories: 图形学
 ---
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
-</script>
-<script src='https://cdn.staticfile.org/mathjax/2.7.5/config/Accessible-full.js'></script>
 
 从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。
 
