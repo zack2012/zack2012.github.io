@@ -541,11 +541,37 @@ M=\left(
  0 & 0 & -\frac{f+n}{f-n} & -\frac{2 f n}{f-n} \\
  0 & 0 & -1 & 0 \\
 \end{array}
-\right)</script>
+\right)</script><p>下图显示了将观察空间里的z轴如何映射到裁剪空间:</p>
+<p><img src="/2018/08/04/coordinate-transformation/map.jpg" width="400px" height="283px" alt="透视变换" title="透视变换"> </p>
+<h4 id="3-6-视口变换"><a href="#3-6-视口变换" class="headerlink" title="3.6 视口变换"></a>3.6 视口变换</h4><p>视口变换是将NDC空间中的坐标变换到屏幕坐标系，单位是像素。实际上视口变换是一个长方体变换。设视口参数为:</p>
+<script type="math/tex; mode=display">
+viewport=(x,y,w,h)</script><p>$x$,$y$为视口的原点，$w$,$h$为视口的宽高，则变换前的长方体参数为:</p>
+<script type="math/tex; mode=display">
+x_l=-1</script><script type="math/tex; mode=display">
+x_h=1</script><script type="math/tex; mode=display">
+y_l=-1</script><script type="math/tex; mode=display">
+y_h=1</script><script type="math/tex; mode=display">
+z_l=-1</script><script type="math/tex; mode=display">
+z_h=1</script><p>变换后的长方体参数为:</p>
+<script type="math/tex; mode=display">
+x_l'=x</script><script type="math/tex; mode=display">
+x_h'=x+w</script><script type="math/tex; mode=display">
+y_l'=y</script><script type="math/tex; mode=display">
+y_h'=y+h</script><script type="math/tex; mode=display">
+z_l'=z_{min}</script><script type="math/tex; mode=display">
+z_h'=z_{max}</script><p>带入长方体变换公式，得到:</p>
+<script type="math/tex; mode=display">
+M=
+\begin{pmatrix}
+\frac{w}{2} & 0 & 0 & x+\frac{w}{2}\\
+0 & \frac{h}{2} & 0 & y+\frac{h}{2}\\
+0 & 0 & \frac{z_{max}-z_{min}}{2} & \frac{z_{max}+z_{min}}{2}\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}</script>
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkh0i0jd0003kar536fowji3" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkqmapwc0004k5r58947hcgp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -595,7 +621,7 @@ M=\left(
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkh0i0iy0000kar55laor3vu" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkqmapvw0000k5r5lcqyaclm" class="article-share-link">Share</a>
       
       
     </footer>
