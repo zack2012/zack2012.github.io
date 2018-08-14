@@ -7,12 +7,12 @@
   
   <title>图形学中的坐标变换 | Lowe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });   从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
+  <meta name="description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向">
 <meta property="og:type" content="article">
 <meta property="og:title" content="图形学中的坐标变换">
 <meta property="og:url" content="https://loweyu.com/2018/08/04/coordinate-transformation/index.html">
 <meta property="og:site_name" content="Lowe">
-<meta property="og:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });   从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
+<meta property="og:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/crossProduct001.jpg">
@@ -27,10 +27,10 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustum.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustumTocube.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/map.jpg">
-<meta property="og:updated_time" content="2018-08-13T15:07:59.339Z">
+<meta property="og:updated_time" content="2018-08-14T00:01:27.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
-<meta name="twitter:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });   从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量">
+<meta name="twitter:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });     从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向">
 <meta name="twitter:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
   
   
@@ -100,11 +100,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <script src="https://cdn.staticfile.org/mathjax/2.7.5/config/Accessible-full.js"></script>
+        <!-- <script asyn src='/js/mathjax.js'></script> -->
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
   tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
 });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
 </script>
 
 <p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
@@ -580,7 +582,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjksexomo00048tr5at9zfnb6" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjksx0xia0004vdr54x5cuid9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -705,6 +707,6 @@ M=
             all[i].SourceElement().parentNode.className += ' has-jax';
     });
 </script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="https://cdn.bootcss.com/mathjax/2.7.4/latest.js"></script>
 </body>
 </html>
