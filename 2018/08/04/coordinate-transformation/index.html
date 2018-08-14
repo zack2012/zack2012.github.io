@@ -7,12 +7,12 @@
   
   <title>图形学中的坐标变换 | Lowe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });  0,f&amp;gt;0,z_1">
+  <meta name="description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c">
 <meta property="og:type" content="article">
 <meta property="og:title" content="图形学中的坐标变换">
 <meta property="og:url" content="https://loweyu.com/2018/08/04/coordinate-transformation/index.html">
 <meta property="og:site_name" content="Lowe">
-<meta property="og:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });  0,f&amp;gt;0,z_1">
+<meta property="og:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/crossProduct001.jpg">
@@ -27,10 +27,10 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustum.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustumTocube.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/map.jpg">
-<meta property="og:updated_time" content="2018-08-14T00:20:53.598Z">
+<meta property="og:updated_time" content="2018-08-14T00:43:11.828Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
-<meta name="twitter:description" content="MathJax.Hub.Config({   tex2jax: {inlineMath: [[&apos;$&apos;,&apos;$&apos;], [&apos;\\(&apos;,&apos;\\)&apos;]]} });  0,f&amp;gt;0,z_1">
+<meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c">
 <meta name="twitter:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/dotProduct001.jpg">
   
   
@@ -100,14 +100,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-});
-</script>
-<script type="text/javascript" async src="https://cdn.staticfile.org/mathjax/2.7.5/config/TeX-MML-AM_CHTML.js" <="" script="">
-
-<p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
+        <p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。</p>
 <h2 id="1-数学知识"><a href="#1-数学知识" class="headerlink" title="1. 数学知识"></a>1. 数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
 <h4 id="1-1-向量"><a href="#1-1-向量" class="headerlink" title="1.1 向量"></a>1.1 向量</h4><script type="math/tex; mode=display">
 \vec{a}+\vec{b}=\vec{b}+\vec{a}</script><script type="math/tex; mode=display">
@@ -580,7 +573,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjksyock10004x6r51ablxp83" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjksyot5v0004ydr5mg6na7ie" class="article-share-link">Share</a>
       
       
     </footer>
@@ -706,5 +699,7 @@ M=
     });
 </script>
 <script src="https://cdn.bootcss.com/mathjax/2.7.4/latest.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
 </body>
 </html>
