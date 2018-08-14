@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustum.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustumTocube.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/map.jpg">
-<meta property="og:updated_time" content="2018-08-14T00:43:11.828Z">
+<meta property="og:updated_time" content="2018-08-14T01:15:04.876Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
 <meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c">
@@ -203,7 +203,7 @@ q=(\frac{x}w,\frac{y}w,\frac{z}w,1)</script><p>裁剪空间通过以上变换�
 0\leq z\leq1</script><h4 id="2-6-屏幕坐标系"><a href="#2-6-屏幕坐标系" class="headerlink" title="2.6 屏幕坐标系"></a>2.6 屏幕坐标系</h4><p>NDC坐标最后还需要通过视口变换(viewport transformation)得到屏幕坐标，屏幕坐标的单位是像素。  </p>
 <p>通过以上介绍可以知道，从3维空间到2维空间的坐标变换是一步一步串联起来的，每一步都对应着一个坐标空间。完整的流程如下图所示:  </p>
 <p><img src="/2018/08/04/coordinate-transformation/transform.jpg" width="400px" height="150px" alt="坐标变换" title="坐标变换">  </p>
-<h2 id="3-坐标变换"><a href="#3-坐标变换" class="headerlink" title="3. 坐标变换"></a>3. 坐标变换</h2><p>复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍最基本的三种坐标变换：缩放、旋转、平移。</p>
+<h2 id="3-坐标变换"><a href="#3-坐标变换" class="headerlink" title="3. 坐标变换"></a>3. 坐标变换</h2><p>复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍一些常用的坐标变换公式。</p>
 <h4 id="3-1-仿射坐标系"><a href="#3-1-仿射坐标系" class="headerlink" title="3.1 仿射坐标系"></a>3.1 仿射坐标系</h4><p>坐标系的实质是空间的点到有序数组的对应关系，因此建立坐标系首先需要建立一个参考系，即坐标标架。</p>
 <p>确定一个仿射标架需要3个不共面的向量以及一个定点，我们可以用如下记号表示一个仿射标架:  </p>
 <script type="math/tex; mode=display">
@@ -429,7 +429,7 @@ M=
  0 & 0 & \frac{z_h'-z_l'}{z_h-z_l} & \frac{z_h z_l'-z_l z_h'}{z_h-z_l} \\
  0 & 0 & 0 & 1 \\
 \end{array}
-\right)</script><h4 id="3-6-透视变换"><a href="#3-6-透视变换" class="headerlink" title="3.6 透视变换"></a>3.6 透视变换</h4><p>透视变换由3部分组成，投影中心，投影平面和被投影物体。将投影中心和被投影物体(相连，与投影平面所交的点就是投影点。</p>
+\right)</script><h4 id="3-6-透视变换"><a href="#3-6-透视变换" class="headerlink" title="3.6 透视变换"></a>3.6 透视变换</h4><p>透视变换由3部分组成，投影中心，投影平面和被投影物体。将投影中心和被投影物体相连，与投影平面所交的点就是投影点。</p>
 <p>我们按如下规则建立坐标系：投影中心是坐标系的原点，投影平面平行与z轴且在z轴的负半部分，投影中心到投影平面的距离为$d$($d&gt;0$)，如下图所示: </p>
 <p><img src="/2018/08/04/coordinate-transformation/perspect.jpg" width="600px" height="188px" alt="立方体变换" title="立方体变换">  </p>
 <p>由上图可知，投影点与被投影点有如下关系:</p>
@@ -573,7 +573,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkszrxir0004j1fybwq8a1k2" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkt0mdk800049afy4allfpb6" class="article-share-link">Share</a>
       
       
     </footer>
