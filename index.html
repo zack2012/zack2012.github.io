@@ -479,10 +479,10 @@ n & 0 & 0 & 0\\
 <p>根据2.4节可知，我们还需要把刚才得到长方体变换为规范视见体(Canonical View Volume)。<br>在图形学中，我们把近裁剪面变换到$z=-1$平面，把远裁剪面变换到$z=1$平面上。因此为了套用上面得到的长方体变换公式，我们需要先对z轴做一次反射，即乘以下面这个矩阵:</p>
 <script type="math/tex; mode=display">
 \begin{pmatrix}
-1 & 0 & 0 & 0\\
-0 & 1 & 0 & 0\\
+1 & 0 & 0  & 0\\
+0 & 1 & 0  & 0\\
 0 & 0 & -1 & 0\\
-0 & 0 & 0 & 0\\
+0 & 0 & 0  & 1\\
 \end{pmatrix}</script><p>经过透视矩阵、反射矩阵变换后得到的长方体坐标为: </p>
 <script type="math/tex; mode=display">
 x_l=l</script><script type="math/tex; mode=display">
@@ -560,7 +560,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjkt0mdk800049afy4allfpb6" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjl7atm4q00042tr5psgxv5rw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -610,7 +610,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjkt0mdjm00019afyg2k51cid" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjl7atm4900012tr5dfzh3dpt" class="article-share-link">Share</a>
       
       
     </footer>
