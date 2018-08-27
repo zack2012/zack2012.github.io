@@ -46,4 +46,24 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 
 <img src="metal-introduction/RenderingPipeline.jpg" width="150px" height="600px" alt="渲染流水线" title="[title]">  
 
+1、渲染流水线开始前需要准备顶点相关的数据，比如顶点坐标、顶点颜色等。  
+
+2、Vertex Shader阶段是可编程的，它接收前面提供的顶点数据，计算出一组新的顶点数据。Vertex Shader输出的顶点坐标是在裁剪空间下的。
+
+3、Tessellation中文为曲面细分，它的作用简单的说就是产生更多的顶点，顶点数越多，则三角形越多，生成的图像越细腻。Tessellation阶段也是可编程的  
+
+4、Vertex Post-Processing阶段主要是进行裁剪、透视除法、视口转换等操作
+
+5、Primitive Assembly阶段是把前面输出的顶点数据集合在一起组成图元，输出一个有序的简单图元（点、线、三角形）序列。  
+
+6、Rasterization光栅化，它是渲染流水线的核心阶段，遍历每个被图元覆盖的像素，用顶点数据对这些像素进行插值，它的输出是一组fragment。fragment是一组状态的集合，用于计算一个像素的最终数据。
+
+7、Fragment Shader阶段是可编程的，它接受Rasterization输出的fragment，输出一个像素的颜色。  
+
+8、Per-Fragment Processing是将Fragment Shader输出的结果在经过一些处理，包括Scissor Test、Stencil Test、Depth Test、Blending、Logical Operation、Write Mask。
+
+在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。下面我们将用它来编写我们的第一个图形程序：Hello Triangle。
+
+## 3、Hello Triangle
+
 [坐标变换](2018/08/04/coordinate-transformation/)
