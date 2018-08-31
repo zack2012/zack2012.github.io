@@ -64,6 +64,186 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 
 在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。下面我们将用它来编写我们的第一个图形程序：Hello Triangle。
 
-## 3、Hello Triangle
+## 3、Metal里重要的接口、类
 
-[坐标变换](2018/08/04/coordinate-transformation/)
+Metal是按面向接口设计的，核心功能都是通过接口提供。下面介绍Metal重要的接口、类。
+
+1、MTLDevice  
+
+MTLDevice是一个接口，它代表着一个GPU，在图形编程中，把GPU称做device，把CPU称作host。MTLDevice的主要作用就是创建其他重要的接口和类以及查询GPU一些参数
+
+2、MTLCommandQueue  
+
+MTLCommandQueue是一个用来管理command buffer的顺序队列，它是线程安全的。
+
+3、MTLRenderPipelineState
+
+MTLRenderPipelineState定义了渲染流水线的状态，比如设置vertex和fragment shader。创建MTLRenderPipelineState需要校验一系列状态，这些操作很耗时，所以应尽可能的早的创建MTLRenderPipelineState并复用它们。MTLRenderPipelineState需要用MTLRenderPipelineDescriptor来配置。Metal中有很多这样的Descriptor，用来配置信息。
+
+4、MTLCommandBuffer
+
+MTLCommandBuffer用来存储要提交到GPU执行的命令。一旦调用了commit()方法后，MTLCommandBuffer就不能在往里添加命令了。
+
+ 5、MTLRenderCommandEncoder
+
+ MTLRenderCommandEncoder是用来设置流水线状态和执行图形绘制的命令的协议。通常MTLRenderCommandEncoder需要执行以下任务:  
+* 设置MTLRenderPipelineState。
+* 设置提供给vertex shader和fragment shader需要的资源，比如顶点信息，坐标变化矩阵。
+* 设置固定功能的管道(fixed-function state)，比如viewport，depth test，stencil test。
+* 调用绘制命令(draw call)
+
+6、MTLRenderPassDescriptor
+
+MTLRenderPassDescriptor是一组渲染目标(render target)的集合。是一次render pass生成的像素的输出目标。这里有一个很重要的概念就是render pass。  render pass 在Apple文档里描述为更新一组渲染目标的命令集合。一张复杂的图像，可以通过渲染多遍来完成，每一遍只渲染图像的某些部分，最后把这些部分组合在一起形成最终的图像。这一遍就是一次render pass，所以有些图形软件也里也把render pass叫做render layer。在Metal中，一个MTLRenderCommandEncoder对应一次render pass。
+
+7、MTLTexture  
+
+MTLTexture是一片存储格式化图像数据的内存区域，可以被GPU访问。MTLTexure可以用作vertex shader和fragment shader的输入，也可以作为存储渲染流水线输出pixel的地方。
+
+8、CAMetalLayer
+
+在iOS和macOS上，需要通过CAMetalLayer来把图像显示在屏幕上。CAMetalLayer内部维护了一个用来在屏幕上显示内容的MTLTexture的池子。通过nextDrawable()方法得到一个MTLTexture，作为render pass的渲染目标。
+
+在Metal中，对象被分为持久对象和瞬态对象。创建持久对象需要耗费大量的时间，这些对象应该尽可能早的创建并复用。MTLDevice、MTLCommandQueue、MTLRenderPipelineState就属于这类对象。
+
+## 4、Hello Triangle 
+
+下面的只是部分源码，完整源码可以参考github。
+
+我们先创建一个用来表示顶点数据的struct，包含顶点位置(单位为像素)和颜色
+
+```swift
+struct Vertex {
+    /// 顶点位置，单位像素
+    var position: float4
+    
+    /// 顶点颜色，RGBA
+    var color: float4
+}
+```
+
+由前面可知，我们需要一个CAMetalLayer来显示内容，我们将其分装在一个自定义的UIView类里:
+
+```swift
+class HelloTriangleView: UIView {
+    private var metalLayer: CAMetalLayer {
+        return layer as! CAMetalLayer
+    }
+    
+    override class var layerClass: AnyClass {
+        return CAMetalLayer.self
+    }
+}
+```
+
+出于方便的考虑，我们把一些不属于View的内容也放在HelloTriangleView里，后面我们会它拆分为两个类，使view可以复用。
+
+```swift
+class HelloTriangleView: UIView {
+    /// .....
+
+    private var device: MTLDevice
+    private var pipelineState: MTLRenderPipelineState!
+    private var commandQueue: MTLCommandQueue!
+    private var displayLink: CADisplayLink?
+    
+    /// 顶点数据，单位像素
+    private let vertices: [Vertex] = [
+        Vertex(position: float4(0, 250, 0, 1), color: float4(1, 0, 0, 1)),
+        Vertex(position: float4(-250, -250, 0, 1), color: float4(0, 1, 0, 1)),
+        Vertex(position: float4(250, -250, 0, 1), color: float4(0, 0, 1, 1)),
+    ]
+    
+    /// 存储顶点数据的buffer
+    private var vertexBuffer: MTLBuffer?
+    
+    /// 存储坐标变换矩阵的buffer
+    private var matrixBuffer: MTLBuffer?
+}
+```
+
+初始化方法如下: 
+
+```swift
+class HelloTriangleView: UIView {
+    // ......
+    
+    override init(frame: CGRect) {
+        self.device = MTLCreateSystemDefaultDevice()!
+        
+        let scale = UIScreen.main.scale
+        
+        // Metal不用point，而使用pixel，所以这里需要将point转换为pixel
+        let drawableSize = frame.size.applying(CGAffineTransform(scaleX: scale, y: scale))
+        
+        // 设置顶点数据，三角形的中心在屏幕的原点
+        let midX = Float(drawableSize.width / 2)
+        let midY = Float(drawableSize.height / 2)
+        vertices = [
+            Vertex(position: float4(midX, midY + 250, 0, 1), color: float4(1, 0, 0, 1)),
+            Vertex(position: float4(midX - 250, midY - 250, 0, 1), color: float4(0, 1, 0, 1)),
+            Vertex(position: float4(midX + 250, midY - 250, 0, 1), color: float4(0, 0, 1, 1)),
+        ]
+        // ......
+        
+        // 设置从屏幕空间变化到裁剪空间的变换矩阵
+        var mat = float4x4(diagonal: float4(Float(2 / drawableSize.width),
+                                            Float(2 / drawableSize.height),
+                                            1, 1))
+        let length = MemoryLayout.stride(ofValue: mat)
+        withUnsafePointer(to: &mat) {
+            self.matrixBuffer = device.makeBuffer(bytes: $0,
+                                                length: length,
+                                                options: .storageModeShared)
+        }
+        
+        // 获取vertex shader和fragment shader，用于设置render pipeline
+        let library = device.makeDefaultLibrary()
+        let vertexFun = library?.makeFunction(name: "helloTriangleShader")
+        let fragmentFun = library?.makeFunction(name: "helloTriangleFragment")
+        
+        // 创建render pipeline
+        let pipelineDesc = MTLRenderPipelineDescriptor()
+        pipelineDesc.vertexFunction = vertexFun
+        pipelineDesc.fragmentFunction = fragmentFun
+        pipelineDesc.colorAttachments[0].pixelFormat = metalLayer.pixelFormat
+        pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineDesc)
+        
+        // 创建commandQueue
+        commandQueue = device.makeCommandQueue()
+    }
+}
+``` 
+
+vertex shader要求输出的顶点坐标是在裁剪空间下，而我们提供的坐标是屏幕坐标，根据[坐标变换](2018/08/04/coordinate-transformation/)可知，从NDC变换到屏幕空间的矩阵为:
+
+$$
+M = \begin{pmatrix}
+\frac{w}{2} & 0 & 0 & x+\frac{w}{2}\\
+0 & \frac{h}{2} & 0 & y+\frac{h}{2}\\
+0 & 0 & \frac{z_{max}-z_{min}}{2} & \frac{z_{max}+z_{min}}{2}\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}
+$$
+
+因为只是在画一个二维图形，可以认为NDC与裁剪空间的坐标相同($w=1$)，$z_{max}=-z_{min}$，视口的原点默认为0，即$x=0, y=0$，最后得到从裁剪空间到屏幕坐标系的变换矩阵:  
+
+$$
+M = \begin{pmatrix}
+\frac{w}{2} & 0 & 0 & \frac{w}{2}\\
+0 & \frac{h}{2} & 0 & \frac{h}{2}\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}
+$$
+
+对这个矩阵求逆，得:
+
+$$
+M = \begin{pmatrix}
+\frac{w}{2} & 0 & 0 & \frac{w}{2}\\
+0 & \frac{h}{2} & 0 & \frac{h}{2}\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}
+$$
