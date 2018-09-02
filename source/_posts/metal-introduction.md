@@ -259,8 +259,8 @@ $$
 
 $$
 M^{-1} = \begin{pmatrix}
-\frac{w}{2} & 0 & 0 & \frac{w}{2}\\
-0 & \frac{h}{2} & 0 & \frac{h}{2}\\
+\frac{2}{w} & 0 & 0 & -1\\
+0 & \frac{2}{h} & 0 & -1\\
 0 & 0 & 1 & 0\\
 0 & 0 & 0 & 1\\
 \end{pmatrix}
