@@ -147,7 +147,12 @@ M = \begin{pmatrix}
 0 & \frac{h}{2} & 0 & y+\frac{h}{2}\\
 0 & 0 & \frac{z_{max}-z_{min}}{2} & \frac{z_{max}+z_{min}}{2}\\
 0 & 0 & 0 & 1\\
-\end{pmatrix}</script><p>因为只是在画一个二维图形，可以认为NDC与裁剪空间的坐标相同($w=1$)，$z<em>{max}=-z</em>{min}$, 视口的原点默认为0，即$x=0, y=0$，最后得到从裁剪空间到屏幕坐标系的变换矩阵:  </p>
+\end{pmatrix}</script><p>因为只是在画一个二维图形，可以认为NDC与裁剪空间的坐标相同，视口的原点默认为0。所以我们有: </p>
+<script type="math/tex; mode=display">
+x=0</script><script type="math/tex; mode=display">
+y=0</script><script type="math/tex; mode=display">
+z_{max}=-z_{min}</script><script type="math/tex; mode=display">
+w=1</script><p>带入得到从裁剪空间到屏幕坐标系的变换矩阵:  </p>
 <script type="math/tex; mode=display">
 M = \begin{pmatrix}
 \frac{w}{2} & 0 & 0 & \frac{w}{2}\\
@@ -156,7 +161,7 @@ M = \begin{pmatrix}
 0 & 0 & 0 & 1\\
 \end{pmatrix}</script><p>对这个矩阵求逆，得:</p>
 <script type="math/tex; mode=display">
-M = \begin{pmatrix}
+M^{-1} = \begin{pmatrix}
 \frac{w}{2} & 0 & 0 & \frac{w}{2}\\
 0 & \frac{h}{2} & 0 & \frac{h}{2}\\
 0 & 0 & 1 & 0\\
@@ -191,7 +196,7 @@ M = \begin{pmatrix}
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjlkz58zh0005nqfyydgbcvfp" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjlkzbiiz0004uyfyd623prdg" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal-iOS-图形学/">Metal iOS 图形学</a></li></ul>
@@ -702,7 +707,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjlkz58zg0004nqfyc3h7sa5s" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjlkzbij00005uyfy2db2i087" class="article-share-link">Share</a>
       
       
     </footer>
@@ -752,7 +757,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjlkz58yz0000nqfymh0bve7b" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjlkzbiii0001uyfyyy34trnn" class="article-share-link">Share</a>
       
       
     </footer>
