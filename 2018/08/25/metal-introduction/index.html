@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/RenderingPipeline.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/triangle.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/Cube.jpg">
-<meta property="og:updated_time" content="2018-09-02T14:56:25.991Z">
+<meta property="og:updated_time" content="2018-09-02T15:01:37.704Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Metal API 介绍">
 <meta name="twitter:description" content="Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了github上。 1、API图形学编程中主要有以下几个API：OpenGL、Vulkan、Direct3D、Metal。下面分别介绍。 1、 OpenGL历史悠久的图形学API，由Khronos G">
@@ -166,8 +166,8 @@ M = \begin{pmatrix}
 \end{pmatrix}</script><p>对这个矩阵求逆，得:</p>
 <script type="math/tex; mode=display">
 M^{-1} = \begin{pmatrix}
-\frac{w}{2} & 0 & 0 & \frac{w}{2}\\
-0 & \frac{h}{2} & 0 & \frac{h}{2}\\
+\frac{2}{w} & 0 & 0 & -1\\
+0 & \frac{2}{h} & 0 & -1\\
 0 & 0 & 1 & 0\\
 0 & 0 & 0 & 1\\
 \end{pmatrix}</script><p>绘制三角形的代码如下:</p>
@@ -200,7 +200,7 @@ M^{-1} = \begin{pmatrix}
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjlkzbiiz0004uyfyd623prdg" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjlkziyy60005erfyfe46aydi" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal-iOS-图形学/">Metal iOS 图形学</a></li></ul>
