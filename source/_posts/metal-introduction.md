@@ -4,7 +4,7 @@ date: 2018-08-25 14:37:47
 tags: Metal iOS 图形学
 ---
 
-Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。
+Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了[github](https://github.com/zack2012/MetalGraphics)上。
 
 ## 1、API
 
@@ -16,7 +16,7 @@ Hello World很可能是绝大多数程序员写的第一个程序，对于图形
 
 ##### 2、Vulkan
 
-Vulkan同样由[Khronos Group](https://www.khronos.org)维护，是基于AMD的[Mantle](https://zh.wikipedia.org/wiki/Mantle_(API))构建的，它与OpenGL相比，是一个更加底层的API，能充分利用多个CPU核心，有着更高的执行效率，当然学习曲线也更加陡峭。在跨平台方面，它不如OpenGL，是的，苹果不带它玩，你没法在macOS、iOS上直接使用它，但可以通过[MoltenVK](https://github.com/KhronosGroup/MoltenVK)来实现。
+Vulkan同样由[Khronos Group](https://www.khronos.org)维护，是基于AMD的[Mantle](https://zh.wikipedia.org/wiki/Mantle_(API)构建的，它与OpenGL相比，是一个更加底层的API，能充分利用多个CPU核心，有着更高的执行效率，当然学习曲线也更加陡峭。在跨平台方面，它不如OpenGL，是的，苹果不带它玩，你没法在macOS、iOS上直接使用它，但可以通过[MoltenVK](https://github.com/KhronosGroup/MoltenVK)来实现。
 
 ##### 3、Direct3D
 
@@ -62,29 +62,29 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 
 8、Per-Fragment Processing是将Fragment Shader输出的结果在经过一些处理，包括Scissor Test、Stencil Test、Depth Test、Blending、Logical Operation、Write Mask。
 
-在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。下面我们将用它来编写我们的第一个图形程序：Hello Triangle。
+在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。
 
 ## 3、Metal里重要的接口、类
 
 Metal是按面向接口设计的，核心功能都是通过接口提供。下面介绍Metal重要的接口、类。
 
-1、MTLDevice  
+__1、MTLDevice__  
 
 MTLDevice是一个接口，它代表着一个GPU，在图形编程中，把GPU称做device，把CPU称作host。MTLDevice的主要作用就是创建其他重要的接口和类以及查询GPU一些参数
 
-2、MTLCommandQueue  
+__2、MTLCommandQueue__  
 
 MTLCommandQueue是一个用来管理command buffer的顺序队列，它是线程安全的。
 
-3、MTLRenderPipelineState
+__3、MTLRenderPipelineState__
 
 MTLRenderPipelineState定义了渲染流水线的状态，比如设置vertex和fragment shader。创建MTLRenderPipelineState需要校验一系列状态，这些操作很耗时，所以应尽可能的早的创建MTLRenderPipelineState并复用它们。MTLRenderPipelineState需要用MTLRenderPipelineDescriptor来配置。Metal中有很多这样的Descriptor，用来配置信息。
 
-4、MTLCommandBuffer
+__4、MTLCommandBuffer__
 
 MTLCommandBuffer用来存储要提交到GPU执行的命令。一旦调用了commit()方法后，MTLCommandBuffer就不能在往里添加命令了。
 
- 5、MTLRenderCommandEncoder
+__5、MTLRenderCommandEncoder__
 
  MTLRenderCommandEncoder是用来设置流水线状态和执行图形绘制的命令的协议。通常MTLRenderCommandEncoder需要执行以下任务:  
 * 设置MTLRenderPipelineState。
@@ -92,15 +92,15 @@ MTLCommandBuffer用来存储要提交到GPU执行的命令。一旦调用了co
 * 设置固定功能的管道(fixed-function state)，比如viewport，depth test，stencil test。
 * 调用绘制命令(draw call)
 
-6、MTLRenderPassDescriptor
+__6、MTLRenderPassDescriptor__
 
 MTLRenderPassDescriptor是一组渲染目标(render target)的集合。是一次render pass生成的像素的输出目标。这里有一个很重要的概念就是render pass。  render pass 在Apple文档里描述为更新一组渲染目标的命令集合。一张复杂的图像，可以通过渲染多遍来完成，每一遍只渲染图像的某些部分，最后把这些部分组合在一起形成最终的图像。这一遍就是一次render pass，所以有些图形软件也里也把render pass叫做render layer。在Metal中，一个MTLRenderCommandEncoder对应一次render pass。
 
-7、MTLTexture  
+__7、MTLTexture__  
 
 MTLTexture是一片存储格式化图像数据的内存区域，可以被GPU访问。MTLTexure可以用作vertex shader和fragment shader的输入，也可以作为存储渲染流水线输出pixel的地方。
 
-8、CAMetalLayer
+__8、CAMetalLayer__
 
 在iOS和macOS上，需要通过CAMetalLayer来把图像显示在屏幕上。CAMetalLayer内部维护了一个用来在屏幕上显示内容的MTLTexture的池子。通过nextDrawable()方法得到一个MTLTexture，作为render pass的渲染目标。
 
@@ -108,7 +108,7 @@ MTLTexture是一片存储格式化图像数据的内存区域，可以被GPU访�
 
 ## 4、Hello Triangle 
 
-下面的只是部分源码，完整源码可以参考github。
+下面只是部分源码，完整源码可以参考[github](https://github.com/zack2012/MetalGraphics)。
 
 我们先创建一个用来表示顶点数据的struct，包含顶点位置(单位为像素)和颜色
 
@@ -193,8 +193,8 @@ class HelloTriangleView: UIView {
         let length = MemoryLayout.stride(ofValue: mat)
         withUnsafePointer(to: &mat) {
             self.matrixBuffer = device.makeBuffer(bytes: $0,
-                                                length: length,
-                                                options: .storageModeShared)
+                                                  length: length,
+                                                  options: .storageModeShared)
         }
         
         // 获取vertex shader和fragment shader，用于设置render pipeline
@@ -213,7 +213,7 @@ class HelloTriangleView: UIView {
         commandQueue = device.makeCommandQueue()
     }
 }
-``` 
+```
 
 vertex shader要求输出的顶点坐标是在裁剪空间下，而我们提供的坐标是屏幕坐标，根据[坐标变换](2018/08/04/coordinate-transformation/)可知，从NDC变换到屏幕空间的矩阵为:
 
@@ -247,3 +247,188 @@ M = \begin{pmatrix}
 0 & 0 & 0 & 1\\
 \end{pmatrix}
 $$
+
+绘制三角形的代码如下:
+
+```swift
+func redraw() {
+    // 获取下一个空闲的texture，当作渲染目标
+    guard let drawable = metalLayer.nextDrawable() else {
+        return
+    }
+        
+    let texture = drawable.texture
+        
+    // 设置render pass
+    let passDesc = MTLRenderPassDescriptor()
+    passDesc.colorAttachments[0].texture = texture
+    passDesc.colorAttachments[0].loadAction = .clear
+    passDesc.colorAttachments[0].storeAction = .store
+        
+    guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+        return
+    }
+        
+    let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDesc)
+        
+    encoder?.setRenderPipelineState(pipelineState)
+        
+    // 给shader vertex传入参数
+    encoder?.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+    encoder?.setVertexBuffer(matrixBuffer, offset: 0, index: 1)
+        
+    // 调用draw call，绘制三角形
+    encoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+    encoder?.endEncoding()
+        
+    // 尽可能早的展示绘制内容
+    commandBuffer.present(drawable)
+        
+    // 提交commandBuffer，commandBuffer提交后就不能继续使用了
+    commandBuffer.commit()
+}
+```
+值得注意的有以下几点： 
+
+* 设置render pass需要从CAMediaLayer获取可用于显示的texture。
+* app给shader传参是通过ArgumentBuffer进行的，例如顶点数据设置在buffer 0，变换矩阵设置在buffer 1
+* 调用drawPrimitives来完成绘制图像，metal只支持点、线、三角形这三种基本图元。
+* 想要显示图像必须调用commandBuffer的present()方法。
+
+最后是shader的代码:  
+
+```c++
+#include <metal_stdlib>
+using namespace metal;
+
+struct Vertex {
+    float4 position [[position]];
+    float4 color;
+};
+
+struct Uniforms {
+    float4x4 modelViewProjectionMatrix;
+};
+
+vertex Vertex helloTriangleShader(device Vertex *vertices [[buffer(0)]],
+                                  constant Uniforms *uniforms [[buffer(1)]],
+                                  uint vid [[vertex_id]]) {
+    Vertex out;
+    auto vtx = vertices[vid];
+    out.position = uniforms->modelViewProjectionMatrix * vtx.position;
+    out.color = vtx.color;
+    return out;
+}
+
+fragment float4 helloTriangleFragment(Vertex inVertex [[stage_in]]) {
+    return inVertex.color;
+}
+```
+
+Metal的shader是基于c++14的，所以看起来与c++有点相似。函数前的vertex、fragement关键字表示是vertex shader还是fragment shader。需要自定义结构体来接受app传入的数据，注意，这里定义的结构体内存布局应该与app传进来的内存布局相同。[[xxx]]表示属性，例如[[position]]表示该属性所修饰的变量为顶点坐标的位置，[[buffer(0)]]表示外部传入的第0个buffer，这里对应就是外部传入的顶点数据。Metal里还有很多属性，具体可以参考[官方文档](https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf)
+
+代码跑起来的结果如下:
+
+<img src="metal-introduction/triangle.jpg" width="300px" height="652px" alt="三角形" title="[title]"> 
+
+## 5、绘制立方体
+
+上面我们完成了三角形的绘制，但绘制三角形过于简单，下面我们绘制一个可以旋转的立方体来完整的了解如何绘制一个3D图形。
+
+在绘制三角形时，我们把绘制逻辑放在了view里，更好的做法是把绘制逻辑和view分离开来，使得view可以被复用。view将绘制委托给Renderer类，而view只提供render pass，代码如下:  
+
+```swift
+protocol CubeViewDelegate: class {
+    func drawInView(_ view: CubeView)
+}
+
+class CubeView: UIView {
+    // ......
+    
+    func renderPass() -> (desc: MTLRenderPassDescriptor, drawable: CAMetalDrawable?) {
+        let drawable = metalLayer.nextDrawable()
+        let passDesc = MTLRenderPassDescriptor()
+        passDesc.colorAttachments[0].texture = drawable?.texture
+        passDesc.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+        passDesc.colorAttachments[0].loadAction = .clear
+        passDesc.colorAttachments[0].storeAction = .store
+        
+        passDesc.depthAttachment.texture = self.depthTexture
+        passDesc.depthAttachment.clearDepth = 1
+        passDesc.depthAttachment.loadAction = .clear
+        passDesc.depthAttachment.storeAction = .dontCare
+        
+        return (passDesc, drawable)
+    }
+}
+```
+
+绘制立方体的流程与绘制三角形大体上是一样的。首页要准备顶点数据:
+
+```swift
+CubeRenderer {
+    // ......
+
+    // 顶点数据
+    private static let vertices = [
+        Vertex(position: float4(-1,  1,  1, 1), color: float4(0, 1, 1, 1)),
+        Vertex(position: float4(-1, -1,  1, 1), color: float4(0, 0, 1, 1)),
+        Vertex(position: float4( 1, -1,  1, 1), color: float4(1, 0, 1, 1)),
+        Vertex(position: float4( 1,  1,  1, 1), color: float4(1, 1, 1, 1)),
+        
+        Vertex(position: float4(-1,  1, -1, 1), color: float4(0, 1, 0, 1)),
+        Vertex(position: float4(-1, -1, -1, 1), color: float4(0, 0, 0, 1)),
+        Vertex(position: float4( 1, -1, -1, 1), color: float4(1, 0, 0, 1)),
+        Vertex(position: float4( 1,  1, -1, 1), color: float4(1, 1, 0, 1)),
+    ]
+
+    // 顶点数据索引
+    private static let indices: [UInt16] = [
+        3, 2, 6, 6, 7, 3,
+        4, 5, 1, 1, 0, 4,
+        4, 0, 3, 3, 7, 4,
+        1, 5, 6, 6, 2, 1,
+        0, 1, 2, 2, 3, 0,
+        7, 6, 5, 5, 4, 7
+    ]
+}
+```
+
+metal只能绘制三角形，一个立方体需要绘制12个三角形，一共36个顶点，但确定一个立方体只要8个顶点就够了，因此需要顶点索引buffer，这样就不会浪费存储空间了。顶点索引是有顺序的，从外向内看去为逆时针。
+
+另外，我们需要一个矩阵将物体空间变换到裁剪空间，代码如下: 
+
+```swift
+CubeRenderer {
+    // ......
+
+    private func updateUniformBuffer(view: CubeView) {
+        let scaleFactor: Float = 0.8
+        
+        let rotate1 = Math.matrixRotation(axis: float3(1, 0, 0), angle: rotationX)
+        let rotate2 = Math.matrixRotation(axis: float3(0, 1, 0), angle: rotationY)
+        let scale = Math.matrixScale(scaleFactor)
+        let translate = Math.matrixTranslate(x: 0, y: 0, z: -5)
+        let size = view.metalLayer.drawableSize
+        let apsect = Float(size.width / size.height)
+        let projection = Math.matrixPerspective(aspect: apsect, fovy: 72.radian, near: 1, far: 100)
+        let mat = projection * translate * rotate2 * rotate1 * scale
+        
+        let uniforms = Uniforms(modelViewProjectionMatrix: mat)
+        let uniformRawBuffer = uniformBuffer?.contents()
+        uniformRawBuffer?.storeBytes(of: uniforms,
+                                     toByteOffset: MemoryLayout<Uniforms>.stride * bufferIndex,
+                                     as: Uniforms.self)
+    }
+}
+```
+
+rotationX, rotationY由外部传入，代码中的数学公式已在[坐标变换](2018/08/04/coordinate-transformation/)里详细介绍了，这里就不再重复了。 shader代码也与绘制三角形一样。
+
+最终，run起来的结果如下：
+
+<img src="metal-introduction/Cube.jpg" width="300px" height="652px" alt="立方体" title="[title]"> 
+
+## 6、总结
+
+本文简要介绍了现代GPU的渲染流水线和Metal API，完成了绘制三角形和立方体，其中在绘制立方体时可以看到，[坐标变换](2018/08/04/coordinate-transformation/)是非常基础的知识，一定要牢牢掌握。
