@@ -28,7 +28,6 @@ tags: Metal 图形学
 
 光线和材质之间的作用可以分为3类：  
 * 镜面反射(specular)  
-
 一个物体如果具有镜面反射的性质，则它看起来是有光泽的，这是因为被反射或者散射(scatter)出去的大多数光线的方向都和反射角都和入射角相近。理想镜面反射的光线反射角等于入射角。
 
 * 漫反射(diffuse)  
@@ -66,7 +65,7 @@ $$
 c=c_dl_d\vec{n}\cdot\vec{l} \qquad (3.1.1)
 $$
 
-考虑到物体可能被向光源，则$\vec{n}\cdot\vec{l}$为负值，因此还需要对(3.1)公式做些限制:  
+考虑到物体可能背向光源，则$\vec{n}\cdot\vec{l}$为负值，因此还需要对(3.1.1)公式做些限制:  
 
 $$
 c=c_dl_d\space max(0,\vec{n}\cdot\vec{l}) \qquad (3.1.2)
@@ -92,7 +91,7 @@ $l_a$是环境光强度，$c_a$是环境光系数。引入环境光后的�
 
 #### 3.3、Phone Shading
 
-一些表面看起来会有光泽，这些光泽是由镜面反射产生的。Phone提出了一个近似模型，该模型的计算量只比漫反射多一点。该模型公式如下:  
+一些物体表面看起来会有光泽，这些光泽是由镜面反射产生的。Phone提出了一个近似模型，该模型的计算量只比漫反射多一点。该模型公式如下:  
 
 $$
 c=c_rl_r\space max(0, (\vec{r}\cdot\vec{e})^p) \qquad (3.3.1)
@@ -136,9 +135,7 @@ $$
 c=c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.3)
 $$
 
-注意(3.3.3)里的$p$与(3.3.2)的$p$并不是同一个值。
-
-改进后的模型也被称为Blinn-Phong模型。
+注意(3.3.3)里的$p$与(3.3.2)的$p$并不是同一个值。改进后的模型也被称为Blinn-Phong模型。
 
 这样我们就得到一个比较完整的渲染公式
 
@@ -150,3 +147,6 @@ $$
 
 <img src="simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="[title]"> 
 
+## 4、总结
+
+本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考[github](https://github.com/zack2012/MetalGraphics)
