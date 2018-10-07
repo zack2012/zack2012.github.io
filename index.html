@@ -61,6 +61,58 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ModelIO" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/10/07/ModelIO/" class="article-date">
+  <time datetime="2018-10-07T01:35:36.000Z" itemprop="datePublished">2018-10-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/07/ModelIO/">Model I/O 介绍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在前面的几篇文章中我们都是手动输入顶点数据(立方体)或者使用代码生成的方式(球面)创建模型，可以看到这种创建模型的方式非常繁琐且极其局限，无法在真正的工程里使用，你能想象用这种方式创建一个人体模型吗？</p>
+<p>从程序员的角度来看，模型数据属于一种资源文件，就像图片资源那样，由专业的人员创建，保存成某种格式的文件，该文件包含了一切必要的数据，例如，顶点坐标、顶点法向量等，我们只要读取这种文件后就可以直接用来绘制。</p>
+<p>本文主要介绍上面提到的3D模型格式以及Apple官方提供的读取模型的库Model I/O，最后通过Model I/O绘制一个复杂的模型。完整的源码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>。</p>
+<h2 id="1、3D文件格式"><a href="#1、3D文件格式" class="headerlink" title="1、3D文件格式"></a>1、3D文件格式</h2><p>3D文件格式种类繁多，就像图片文件格式一样，这里不打算全部介绍一遍，只介绍我认为比较重要的格式。</p>
+<h5 id="1-1-Alembic"><a href="#1-1-Alembic" class="headerlink" title="1.1 Alembic"></a>1.1 Alembic</h5><p>文件后缀名为.abc, 由大名鼎鼎的<a href="https://baike.baidu.com/item/工业光魔公司/7652141?fromtitle=ILM&amp;fromid=44269&amp;fr=aladdin" target="_blank" rel="noopener">工业光魔ILM</a>、Sony Pictures与Imageworks共同开发的一种开放格式。该格式主要解决的问题是在不同的软件之间共享复杂的动态场景，Alembic不仅能导出模型，还能导出特效，最早开发出来是用在电影cg特效里，后面游戏引擎也开始支持该格式。</p>
+<h5 id="1-2-glTF"><a href="#1-2-glTF" class="headerlink" title="1.2 glTF"></a>1.2 glTF</h5><p>文件后缀名为.gltf，glTF是一种可以减少3D格式中与渲染无关的冗余数据并且在更加适合OpenGL簇加载的一种3D文件格式。它的提出是源自于3D工业和媒体发展的过程中，对3D格式统一化的急迫需求。在其<a href="https://www.khronos.org/gltf/" target="_blank" rel="noopener">官网</a>里把glTF比作三维文件的JPEG。</p>
+<p>glTF使用json格式进行描述，也可以编译成二进制的内容：bglTF。glTF可以包括场景、摄像机、动画等，也可以包括网格、材质、纹理，甚至包括了渲染技术（technique）、着色器以及着色器程序。同时由于json格式的特点，它支持预留一般以及特定供应商的扩展。</p>
+<h5 id="1-3-STL"><a href="#1-3-STL" class="headerlink" title="1.3 STL"></a>1.3 STL</h5><p>文件后缀名为.stl，STL文件是在计算机图形应用系统中，用于表示三角形网格的一种文件格式。它格式非常简单，只能用于描述三维物体的几何信息，不支持颜色材质等信息。该格式最早发布于1987年，运用领域非常广泛。</p>
+<h5 id="1-4-OBJ"><a href="#1-4-OBJ" class="headerlink" title="1.4 OBJ"></a>1.4 OBJ</h5><p>文件后缀名为.obj，OBJ文件是Alias|Wavefront公司为它的一套基于工作站的3D建模和动画软件”Advanced Visualizer”开发的一种标准3D模型文件格式，很适合用于3D软件模型之间的互导。目前几乎所有知名的3D软件都支持OBJ文件的读写。OBJ文件是一种文本文件，可以直接用写字板打开进行查看和编辑修改。</p>
+<p>OBJ文件除了包含基本模型数据，还附带UV信息及材质路径，但它不包含动画、材质特性、贴图路径、动力学、粒子等信息。主要支持多边形(Polygons)模型。是最受欢迎的格式。</p>
+<h5 id="1-5-PLY"><a href="#1-5-PLY" class="headerlink" title="1.5 PLY"></a>1.5 PLY</h5><p>文件后缀名为.ply，PLY格式全称为Polygon File Format或者 Stanford Triangle Format。它受Wavefront .obj格式的启发，但改进了Obj格式所缺少的对任意属性及群组的扩充性。因此PLY格式发明了”property”及”element”这两个关键词，来概括“顶点、面、相关资讯、群组”的概念。</p>
+<p>PLY主要用以储存立体扫描结果的三维数值，透过多边形片面的集合描述三维物体，与其他格式相较之下这是较为简单的方法。它可以储存的资讯包含颜色、透明度、表面法向量、材质座标与资料可信度，并能对多边形的正反两面设定不同的属性。</p>
+<h5 id="1-6-USD"><a href="#1-6-USD" class="headerlink" title="1.6 USD"></a>1.6 USD</h5><p>文件后缀名为.usd，USD全称为Universal Scene Description，该格式由Pixar开发。对于需要稳定地，可扩展地交换和增强由一系列基本asset组成的任意3D场景而言，USD可以满足这种需求。<a href="https://graphics.pixar.com/usd/docs/index.html" target="_blank" rel="noopener">官网</a>有该格式的详细介绍。</p>
+<p>WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，USDZ实质上就是USD格式的压缩版，最后的Z代表着zip，苹果希望USDZ成为AR领域的通用格式。</p>
+<h2 id="2、Model-I-O"><a href="#2、Model-I-O" class="headerlink" title="2、Model I/O"></a>2、Model I/O</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://loweyu.com/2018/10/07/ModelIO/" data-id="cjmykk9ch0000orr56t5oxq8u" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal/">Metal</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Model-I-O/">Model I/O</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-simple-lighting" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/09/09/simple-lighting/" class="article-date">
@@ -153,10 +205,10 @@ c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l})+c_rl_r\space max(0, (\vec{h}\cd
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/09/09/simple-lighting/" data-id="cjlughbtu0002o5r5dhu3n4pe" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/09/09/simple-lighting/" data-id="cjmykk9cp0004orr51p1dac75" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal-图形学/">Metal 图形学</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal/">Metal</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/图形学/">图形学</a></li></ul>
 
     </footer>
   </div>
@@ -300,10 +352,10 @@ M^{-1} = \begin{pmatrix}
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjlughbuk0008o5r5kxyo3he5" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/25/metal-introduction/" data-id="cjmykk9d8000borr5wmbhavd3" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal-iOS-图形学/">Metal iOS 图形学</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal/">Metal</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iOS/">iOS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/图形学/">图形学</a></li></ul>
 
     </footer>
   </div>
@@ -811,7 +863,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjlughbuk0007o5r5kscvccol" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjmykk9d8000aorr50d5s65it" class="article-share-link">Share</a>
       
       
     </footer>
@@ -861,7 +913,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjlughbtr0001o5r5vrvjlu2e" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/07/08/hello-world/" data-id="cjmykk9cm0002orr5qldbi26b" class="article-share-link">Share</a>
       
       
     </footer>
@@ -891,7 +943,7 @@ M=
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Metal-iOS-图形学/">Metal iOS 图形学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Metal-图形学/">Metal 图形学</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Metal/">Metal</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Model-I-O/">Model I/O</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iOS/">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/图形学/">图形学</a></li></ul>
     </div>
   </div>
 
@@ -901,7 +953,7 @@ M=
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Metal-iOS-图形学/" style="font-size: 10px;">Metal iOS 图形学</a> <a href="/tags/Metal-图形学/" style="font-size: 10px;">Metal 图形学</a>
+      <a href="/tags/Metal/" style="font-size: 20px;">Metal</a> <a href="/tags/Model-I-O/" style="font-size: 10px;">Model I/O</a> <a href="/tags/iOS/" style="font-size: 15px;">iOS</a> <a href="/tags/图形学/" style="font-size: 15px;">图形学</a>
     </div>
   </div>
 
@@ -910,7 +962,7 @@ M=
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li></ul>
     </div>
   </div>
 
@@ -921,6 +973,10 @@ M=
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2018/10/07/ModelIO/">Model I/O 介绍</a>
+          </li>
         
           <li>
             <a href="/2018/09/09/simple-lighting/">简单光照</a>
