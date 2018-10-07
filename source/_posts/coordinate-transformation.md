@@ -65,7 +65,7 @@ $$
 
 $\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示:  
 
-<img src="coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="[title]">  
+<img src="coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="向量点积">  
 
 由点积的公式可以知道，如果两个向量垂直(正交)，则  
 
@@ -119,7 +119,7 @@ $$
 注意，叉积与点积不同，以上定义不能轻易扩展到n维，只适用于3维向量。
 
 向量叉积示意图:  
-<img src="coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="[title]">  
+<img src="coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="向量叉积">  
 向量叉积产生一个新的向量，该向量与原来的两个向量垂直(正交)，方向满足右手定则。  
 
 由叉积公式可以知道，如果$\vec{a}$, $\vec{b}$平行，则:  

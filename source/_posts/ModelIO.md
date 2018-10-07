@@ -52,3 +52,99 @@ WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，US
 
 ## 2、Model I/O
 
+Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
+
+<img src="ModelIO/ModelIO.jpg" width="800px" height="400px" alt="Model I/O" title="Model I/O"> 
+
+Model I/O功能强大，这里我们不做全面的介绍，只介绍与导入模型相关的内容，等到以后用到其他功能时再详细展开。
+
+MDLAsset是用来存储3D模型和其他相关数据的容器，使用起来非常简单：
+
+```swift
+ let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
+```
+
+创建MDLAsset时需要设置MDLVertexDescriptor和MDLMeshBufferAllocator，否则在接下来创建MTKMesh时会失败。
+
+MDLVertexDescriptor是用来描述顶点数据buffer结构、类型、布局的类。我们知道顶点数据不仅包括顶点的位置坐标，还有包含很多其他的数据，我们把这些数据称为属性(attribute)，例如，一个顶点数据可以有坐标属性、法向量属性、颜色属性等，我们可以任意的往顶点数据里添加合适的属性。当应用向GPU传输这些顶点数据时，或者更具体的说，向vertex shader函数传输参数时，是通过一块块连续的内存空间来完成，也就是vertex buffer。
+
+为了方便理解，我们举个例子，假设现在我们有两个顶点A、B，每个顶点有两个属性：
+  1、位置属性position，类型为float3。
+  2、法向量属性normal，类型为float3。  
+  
+float3由simd库提供，每个float3由3个float类型组成，在内存中占据3 * 4 = 12个字节。我们将A、B两个顶点数据存续到如下的buf里
+     A                   B
+|---------|---------|---------|---------|
+ position   normal   position   normal
+|---------|---------|---------|---------|
+
+<--------------- 24 bytes --------------->
+
+通过下面代码向vertex shader函数传输参数：
+
+```swift
+let verticsBuffer = device.makeBuffer(bytes: &buf, length: 24, options: .storageModeShared)
+encoder.setVertexBuffer(verticsBuffer, offset: 0, index: 0)
+```  
+
+vertex shader对应的函数签名为：
+
+```c++
+struct VertexOut {
+    float4 position [[position]];
+    float4 color;
+};
+
+struct VertexInput {
+    float3 position;
+    float3 normal;
+};
+
+vertex VertexOut vertexShader(uint vid [[vertex_id]],
+                              device VertexInput *vertics [[buffer(0)]],
+                             )
+```
+
+在应用程序设置的index，对应vertex shader里的[[buffer(index)]]，[[vertex_id]]表示则当前第几个顶点。这种传输方式有着一个明显的缺点，不够灵活，所以Metal给了另外一种传输方式：
+
+```swift
+encoder.setVertexBuffer(verticsBuffer, offset: 0, index: 0)
+```
+
+```c++
+struct VertexOut {
+    float4 position [[position]];
+    float4 color;
+};
+
+struct VertexInput {
+    float3 position [[attribute(0)]];
+    float3 normal [[attribute(1)]];
+};
+
+vertex VertexOut vertexShader(VertexInput vertexIn [[stage_in]])
+```
+
+无论采取哪种方式传输数据，应用程序最终都是通过setVertexBuffer来向vertex shader传输参数的。那么vertex shader如何获取数据生成VertexInput结构体？一是在应用程序里提供MTLVertexDescriptor，二是在vertex shader添加[[stage_in]]标记。代码如下
+
+```swift
+let renderPipelineDesc = MTLRenderPipelineDescriptor()
+
+let mtlVertexDesc = MTLVertexDescriptor()
+// position
+mtlVertexDesc.attributes[0].format = .float3
+mtlVertexDesc.attributes[0].offset = 0
+mtlVertexDesc.attributes[0].bufferIndex = 0
+
+// normal
+mtlVertexDesc.attributes[1].format = .float3
+mtlVertexDesc.attributes[1].offset = 12
+mtlVertexDesc.attributes[1].bufferIndex = 0
+
+// layout
+mtlVertexDesc.layouts[0].stride = 24
+mtlVertexDesc.layouts[0].stepFunction = .perVertex
+
+renderPipelineDesc.vertexDescriptor = mtlVertexDesc
+```
+

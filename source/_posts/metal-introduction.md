@@ -47,7 +47,7 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 
 Metal是基于object order rendering，所以下面我们介绍基于object order rendering的渲染流水线。Metal流水线如下图所示:
 
-<img src="metal-introduction/RenderingPipeline.jpg" width="150px" height="600px" alt="渲染流水线" title="[title]">  
+<img src="metal-introduction/RenderingPipeline.jpg" width="150px" height="600px" alt="渲染流水线" title="渲染流水线">  
 
 1、渲染流水线开始前需要准备顶点相关的数据，比如顶点坐标、顶点颜色等。  
 
@@ -350,7 +350,7 @@ fragment float4 helloTriangleFragment(Vertex inVertex [[stage_in]]) {
 
 代码跑起来的结果如下:
 
-<img src="metal-introduction/triangle.jpg" width="300px" height="652px" alt="三角形" title="[title]"> 
+<img src="metal-introduction/triangle.jpg" width="300px" height="652px" alt="三角形" title="三角形"> 
 
 ## 5、绘制立方体
 
@@ -448,7 +448,7 @@ rotationX, rotationY由外部传入，代码中的数学公式已在[坐标变�
 
 最终，run起来的结果如下：
 
-<img src="metal-introduction/Cube.jpg" width="300px" height="652px" alt="立方体" title="[title]"> 
+<img src="metal-introduction/Cube.jpg" width="300px" height="652px" alt="立方体" title="立方体"> 
 
 ## 6、总结
 
