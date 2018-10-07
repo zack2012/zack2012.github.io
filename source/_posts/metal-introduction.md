@@ -1,7 +1,10 @@
 ---
 title: Metal API 介绍
 date: 2018-08-25 14:37:47
-tags: Metal iOS 图形学
+tags: 
+    - Metal
+    - iOS
+    - 图形学
 ---
 
 Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了[github](https://github.com/zack2012/MetalGraphics)上。
