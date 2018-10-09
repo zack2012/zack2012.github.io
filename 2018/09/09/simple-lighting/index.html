@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Phong.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpeg">
-<meta property="og:updated_time" content="2018-10-07T07:53:51.661Z">
+<meta property="og:updated_time" content="2018-10-07T23:06:19.866Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简单光照">
 <meta name="twitter:description" content="要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。 光照模型可以分为两类：全局光照和局部光照。在全局光照模型中，物体表面上一点的颜色不仅受到场景内的光源、物体表面材质等的影响，还受到物体之间相互反射的">
@@ -115,7 +115,7 @@
 <h2 id="3、Shading-Model"><a href="#3、Shading-Model" class="headerlink" title="3、Shading Model"></a>3、Shading Model</h2><h4 id="3-1、Lambertian-Shading-Model"><a href="#3-1、Lambertian-Shading-Model" class="headerlink" title="3.1、Lambertian Shading Model"></a>3.1、Lambertian Shading Model</h4><p>Lambertian Shading Model描述物体表面上一点的颜色正比与光源与该点法向量夹角的余弦值:  </p>
 <script type="math/tex; mode=display">
 c\propto \cos\theta</script><p>示意图如下: </p>
-<p><img src="/2018/09/09/simple-lighting/Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> </p>
 <p>用向量表示:  </p>
 <script type="math/tex; mode=display">
 c\propto \vec{n}\cdot\vec{l}</script><p>上面公式需要注意的点有:  </p>
@@ -128,21 +128,21 @@ c\propto \vec{n}\cdot\vec{l}</script><p>上面公式需要注意的点有:  </p
 c=c_dl_d\vec{n}\cdot\vec{l} \qquad (3.1.1)</script><p>考虑到物体可能背向光源，则$\vec{n}\cdot\vec{l}$为负值，因此还需要对(3.1.1)公式做些限制:  </p>
 <script type="math/tex; mode=display">
 c=c_dl_d\space max(0,\vec{n}\cdot\vec{l}) \qquad (3.1.2)</script><p>渲染的效果如下图所示: </p>
-<p><img src="/2018/09/09/simple-lighting/diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> </p>
 <h4 id="3-2、Ambient-Shading"><a href="#3-2、Ambient-Shading" class="headerlink" title="3.2、Ambient Shading"></a>3.2、Ambient Shading</h4><p>从上面的渲染图可以看出，如果只使用diffuse shading，则光源照不到的地方都是黑色的，而在真实环境中，因为到处都是光的反射，所以我们也可以看到光源照不到的地方，因此我们需要对(3.1.2)公式做适当的修改。</p>
 <p>我们可以为(3.1.2)公式增加一个常量，这个常量被叫做环境光，公式如下:</p>
 <script type="math/tex; mode=display">
 c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l}) \qquad (3.2.1)</script><p>$l_a$是环境光强度，$c_a$是环境光系数。引入环境光后的渲染图如下: </p>
-<p><img src="/2018/09/09/simple-lighting/ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="Ambient Shading Model"> </p>
 <h4 id="3-3、Phone-Shading"><a href="#3-3、Phone-Shading" class="headerlink" title="3.3、Phone Shading"></a>3.3、Phone Shading</h4><p>一些物体表面看起来会有光泽，这些光泽是由镜面反射产生的。Phone提出了一个近似模型，该模型的计算量只比漫反射多一点。该模型公式如下:  </p>
 <script type="math/tex; mode=display">
 c=c_rl_r\space max(0, (\vec{r}\cdot\vec{e})^p) \qquad (3.3.1)</script><p>其中$\vec{r}$是理想镜面反射光线的单位向量，$\vec{e}$是观察者方向的单位向量，如下图所示: </p>
-<p><img src="/2018/09/09/simple-lighting/Phong.jpg" width="300px" height="260px" alt="Phong Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/Phong.jpg" width="300px" height="260px" alt="Phong Shading Model" title="Phong Shading Model"> </p>
 <p>从上图中可以推导出:</p>
 <script type="math/tex; mode=display">
 \vec{r}=-\vec{l}+2(\vec{l}\cdot\vec{n})\vec{n} \qquad (3.3.2)</script><p>这样我们就得到了完整Phong模型的计算公式。</p>
 <p>我们也可以对Phong模型做适当的修改，如下图所示:</p>
-<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpg" width="300px" height="260px" alt="Blinn-Phong Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpg" width="300px" height="260px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> </p>
 <p>$\vec{h}$是位于$\vec{l}$, $\vec{e}$的正中间的单位向量，因此有</p>
 <script type="math/tex; mode=display">
 \vec{h}=\frac{\vec{l}+\vec{e}}{|\vec{l}+\vec{e}|}</script><script type="math/tex; mode=display">
@@ -154,13 +154,13 @@ c=c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.3)</script><p>注意
 <p>这样我们就得到一个比较完整的渲染公式</p>
 <script type="math/tex; mode=display">
 c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l})+c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.4)</script><p>使用(3.3.4)公式渲染得到的效果图如下</p>
-<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="[title]"> </p>
+<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> </p>
 <h2 id="4、总结"><a href="#4、总结" class="headerlink" title="4、总结"></a>4、总结</h2><p>本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/09/09/simple-lighting/" data-id="cjmykk9cp0004orr51p1dac75" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/09/09/simple-lighting/" data-id="cjmzk8w4j00022zr53trv3oet" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Metal/">Metal</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/图形学/">图形学</a></li></ul>

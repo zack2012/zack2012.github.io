@@ -27,7 +27,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustum.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustumTocube.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/map.jpg">
-<meta property="og:updated_time" content="2018-10-07T07:54:17.129Z">
+<meta property="og:updated_time" content="2018-10-07T23:06:19.865Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
 <meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。 1. 数学知识坐标变化主要用到的数学知识有：向量、矩阵。 1.1 向量 \vec{a}+\vec{b}=\vec{b}+\vec{a} (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c">
@@ -118,7 +118,7 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3+\cdots+a_nb_n</script><script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=|\vec{a}||\vec{b}|\cos\theta</script><p>$\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示:  </p>
-<p><img src="/2018/08/04/coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="[title]">  </p>
+<p><img src="/2018/08/04/coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="向量点积">  </p>
 <p>由点积的公式可以知道，如果两个向量垂直(正交)，则  </p>
 <script type="math/tex; mode=display">
 \vec{a}\cdot\vec{b}=0</script><p>点积性质:</p>
@@ -135,7 +135,7 @@ k(\vec{a}+\vec{b})=k\vec{a}+k\vec{b}</script><script type="math/tex; mode=displa
 a_3 & 0 & -a_1\\ -a_2 & a_1 & 0 \\\end{pmatrix}</script><p>则:  </p>
 <script type="math/tex; mode=display">
 \vec{a}\times\vec{b} = \mathbf{A}\vec{b}</script><script type="math/tex; mode=display">
-|\vec{a}\times\vec{b}|=|\vec{a}||\vec{b}|\sin\theta</script><p>注意，叉积与点积不同，以上定义不能轻易扩展到n维，只适用于3维向量。<br><br>向量叉积示意图:<br><img src="/2018/08/04/coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="[title]"><br>向量叉积产生一个新的向量，该向量与原来的两个向量垂直(正交)，方向满足右手定则。  </p>
+|\vec{a}\times\vec{b}|=|\vec{a}||\vec{b}|\sin\theta</script><p>注意，叉积与点积不同，以上定义不能轻易扩展到n维，只适用于3维向量。<br><br>向量叉积示意图:<br><img src="/2018/08/04/coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="向量叉积"><br>向量叉积产生一个新的向量，该向量与原来的两个向量垂直(正交)，方向满足右手定则。  </p>
 <p>由叉积公式可以知道，如果$\vec{a}$, $\vec{b}$平行，则:  </p>
 <script type="math/tex; mode=display">
 \vec{a}\times\vec{b}=\vec{0}</script><p>向量叉积性质:  </p>
@@ -573,7 +573,7 @@ M=
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjmykk9d8000aorr50d5s65it" class="article-share-link">Share</a>
+      <a data-url="https://loweyu.com/2018/08/04/coordinate-transformation/" data-id="cjmzk8w5c000f2zr5dnxnnbc4" class="article-share-link">Share</a>
       
       
     </footer>
