@@ -52,7 +52,7 @@ WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，US
 
 ## 2、Model I/O
 
-Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
+Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
 
 <img src="ModelIO/ModelIO.jpg" width="800px" height="400px" alt="Model I/O" title="Model I/O"> 
 
@@ -320,5 +320,34 @@ struct IndexedMesh {
 
 以图中扇形三角形网格为例，只要6个顶点数据就可以完整描述，因此它比索引三角形网格更加节省内存。
 
-了解了什么是Mesh后，我们在来看MTKMesh，查看它的初始化API可以发现，MTKMesh必须配合Model I/O框架使用，MTKMesh本身也不属于Metal，而是MetalKit这个框架下的类。MTKMesh有两个属性值得注意，一个是submeshes，它是MTKSubmesh类型的数组，另一个是vertexBuffers，是MTKMeshBuffer类型的数组。我们在使用调用Metal draw call就是通过这个两个属性来完成绘制的。
+了解了什么是Mesh后，我们在来看MTKMesh，查看它的初始化API可以发现，MTKMesh必须配合Model I/O框架使用，MTKMesh本身也不属于Metal，而是MetalKit这个框架下的类。MTKMesh有两个属性值得注意，一个是submeshes，它是MTKSubmesh类型的数组，另一个是vertexBuffers，是MTKMeshBuffer类型的数组。我们在使用调用Metal draw call时就是通过这个两个属性来完成绘制的。
 
+submesh有什么用？submesh将一个完整的mesh分成多个子mesh，每个子mesh都可以有不同的材质，例如有一个立方体，其中三个面是金属材质，另外三个面是塑料材质，通过submesh我们可以很容易的描述这个立方体，当然，submesh其实还有很多别的用途。
+
+调用draw call的代码如下：
+
+```swift
+private func draw(encoder: MTLRenderCommandEncoder, meshes: [MTKMesh]) {
+    for mesh in meshes {
+        for (i, meshBuffer) in mesh.vertexBuffers.enumerated() {
+            encoder.setVertexBuffer(meshBuffer.buffer, offset: meshBuffer.offset, index: i)
+        }
+            
+        for submesh in mesh.submeshes {
+            encoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                          indexCount: submesh.indexCount,
+                                          indexType: submesh.indexType,
+                                          indexBuffer: submesh.indexBuffer.buffer,
+                                          indexBufferOffset: submesh.indexBuffer.offset)
+            }
+        }
+    }
+```
+
+前面提到，无论是用哪种方式，最后都是要通过setVertexBuffer设置顶点数据，这里我们遍历mesh的vertexBuffers设置顶点数据，mesh.vertexBuffers.count由MDLVertexDescriptor.layouts决定，设置了几个layout的就有几个vertexBuffer。调用draw call的代码非常简单，drawIndexedPrimitives方法的参数都直接对应MTKSubmesh的属性。最后run起来的图如下：
+
+<img src="ModelIO/dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> 
+
+## 3、总结
+
+从现在开始，我们终于可以不再绘制立方体、球体这样简单的模型，通过Model I/O导入模型，我们具备绘制任意复杂模型的能力。这里只是使用了Model I/O最基本的功能，随着对图形学的不断深入学习，我们会慢慢用到Model I/O更多的功能。
