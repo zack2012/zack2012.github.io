@@ -318,7 +318,7 @@ struct IndexedMesh {
 
 <img src="ModelIO/triangleStrips.jpg" width="420px" height="300px" alt="Triangle Strips" title="Triangle Strips"> 
 
-以扇形三角形网格为例，只要5个顶点数据就可以完整描述，因此它比索引三角形网格更加节省内存。
+以图中扇形三角形网格为例，只要6个顶点数据就可以完整描述，因此它比索引三角形网格更加节省内存。
 
 了解了什么是Mesh后，我们在来看MTKMesh，查看它的初始化API可以发现，MTKMesh必须配合Model I/O框架使用，MTKMesh本身也不属于Metal，而是MetalKit这个框架下的类。MTKMesh有两个属性值得注意，一个是submeshes，它是MTKSubmesh类型的数组，另一个是vertexBuffers，是MTKMeshBuffer类型的数组。我们在使用调用Metal draw call就是通过这个两个属性来完成绘制的。
 
