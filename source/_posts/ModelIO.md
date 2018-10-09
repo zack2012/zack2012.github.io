@@ -58,21 +58,77 @@ Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅�
 
 Model I/O功能强大，这里我们不做全面的介绍，只介绍与导入模型相关的内容，等到以后用到其他功能时再详细展开。
 
-MDLAsset是用来存储3D模型和其他相关数据的容器，使用起来非常简单：
+##### 2.1 导入模型
+
+使用Model I/O的第一步就是导入模型，代码很简单：
 
 ```swift
- let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
+let asset = MDLAsset(url: url, vertexDescriptor: vertexDescriptor, bufferAllocator: bufferAllocator)
+```
+第一个参数URL是模型的路径，第三个参数是MDLMeshBufferAllocator，使用MDLAssert加载MDLMesh时必须创建MDLMeshBufferAllocator，否则会失败，创建的代码很简单:
+
+```swift
+let bufferAlloctor = MTKMeshBufferAllocator(device: self.device)
 ```
 
-创建MDLAsset时需要设置MDLVertexDescriptor和MDLMeshBufferAllocator，否则在接下来创建MTKMesh时会失败。
+第二个参数是MDLVertexDescriptor，它与Metal里的MTLVertexDescriptor相对应。创建的代码如下：
 
-MDLVertexDescriptor是用来描述顶点数据buffer结构、类型、布局的类。我们知道顶点数据不仅包括顶点的位置坐标，还有包含很多其他的数据，我们把这些数据称为属性(attribute)，例如，一个顶点数据可以有坐标属性、法向量属性、颜色属性等，我们可以任意的往顶点数据里添加合适的属性。当应用向GPU传输这些顶点数据时，或者更具体的说，向vertex shader函数传输参数时，是通过一块块连续的内存空间来完成，也就是vertex buffer。
+```swift
+let mtlVertexDesc = MTLVertexDescriptor()
+// position
+mtlVertexDesc.attributes[0].format = .float3
+mtlVertexDesc.attributes[0].offset = 0
+mtlVertexDesc.attributes[0].bufferIndex = 0
+
+// normal
+mtlVertexDesc.attributes[1].format = .float3
+mtlVertexDesc.attributes[1].offset = 12
+mtlVertexDesc.attributes[1].bufferIndex = 0
+
+// layout
+mtlVertexDesc.layouts[0].stride = 24
+mtlVertexDesc.layouts[0].stepFunction = .perVertex
+
+let mdlVertexDesc = try! MTKModelIOVertexDescriptorFromMetalWithError(mtlVertexDesc)
+       
+// attribute.name must be set, or draw call will failed
+var attribute = mdlVertexDesc.attributes[0] as! MDLVertexAttribute
+attribute.name = MDLVertexAttributePosition
+attribute = mdlVertexDesc.attributes[1] as! MDLVertexAttribute
+attribute.name = MDLVertexAttributeNormal
+```
+上面的代码先创建MTLVertexDescriptor实例，在通过函数MTKModelIOVertexDescriptorFromMetalWithError创建MDLVertexDescriptor实例，使用MTKModelIOVertexDescriptorFromMetalWithError需要注意的由：该函数只能用在iOS 10以上，创建出来的MDLVertexDescriptor后**必须**设置attribute.name属性的值，否则在后面创建mesh时会失败。如果需要支持iOS 9怎么办？可以用以下代码创建MDLVertexDescriptor：
+
+```swift
+let mdlVertexDesc = MDLVertexDescriptor()
+        
+// position
+var attr = MDLVertexAttribute(name: MDLVertexAttributePosition,
+                              format: .float3,
+                              offset: 0,
+                              bufferIndex: 0)
+mdlVertexDesc.addOrReplaceAttribute(attr)
+        
+// normal
+attr = MDLVertexAttribute(name: MDLVertexAttributeNormal,
+                          format: .float3,
+                          offset: 12,
+                          bufferIndex: 0)
+mdlVertexDesc.addOrReplaceAttribute(attr)
+        
+let layout = MDLVertexBufferLayout(stride: 24)
+mdlVertexDesc.layouts[0] = layout
+```
+
+可以看到，直接创建MDLVertexDescriptor与之前的创建方法并无本质区别，代码上甚至更加简洁(实际项目里的代码需要处理错误，不能简单的使用try!)，那苹果为什么要在iOS 10上添加MTKModelIOVertexDescriptorFromMetalWithError函数？我想是因为创建MDLVertexDescriptor的参数必须与MTLVertexDescriptor一一对应，如果哪天要修改参数时只要改一处地方，这样易于维护。
+
+现在我们来详细介绍下MTLVertexDescriptor，MTLVertexDescriptor是用来描述顶点数据buffer结构、类型、布局的类。我们知道顶点数据不仅包括顶点的位置坐标，还包含很多其他的数据，我们把这些数据称为属性(attribute)，例如，一个顶点数据可以有坐标属性、法向量属性、颜色属性等，我们可以任意的往顶点数据里添加合适的属性。当应用向GPU传输这些顶点数据时，或者更具体的说，向vertex shader函数传输参数时，是通过一块块连续的内存空间来完成，也就是vertex buffer。
 
 为了方便理解，我们举个例子，假设现在我们有两个顶点A、B，每个顶点有两个属性：
   1、位置属性position，类型为float3。
   2、法向量属性normal，类型为float3。  
   
-float3由simd库提供，每个float3由3个float类型组成，在内存中占据3 * 4 = 12个字节。我们将A、B两个顶点数据存续到如下的buf里
+float3由simd库提供，每个float3由3个float类型组成，在内存中占据3 * 4 = 12个字节。我们将A、B两个顶点数据存储到如下的buf里
      A                   B
 |---------|---------|---------|---------|
  position   normal   position   normal
@@ -89,7 +145,7 @@ encoder.setVertexBuffer(verticsBuffer, offset: 0, index: 0)
 
 vertex shader对应的函数签名为：
 
-```c++
+```cpp
 struct VertexOut {
     float4 position [[position]];
     float4 color;
@@ -105,27 +161,7 @@ vertex VertexOut vertexShader(uint vid [[vertex_id]],
                              )
 ```
 
-在应用程序设置的index，对应vertex shader里的[[buffer(index)]]，[[vertex_id]]表示则当前第几个顶点。这种传输方式有着一个明显的缺点，不够灵活，所以Metal给了另外一种传输方式：
-
-```swift
-encoder.setVertexBuffer(verticsBuffer, offset: 0, index: 0)
-```
-
-```c++
-struct VertexOut {
-    float4 position [[position]];
-    float4 color;
-};
-
-struct VertexInput {
-    float3 position [[attribute(0)]];
-    float3 normal [[attribute(1)]];
-};
-
-vertex VertexOut vertexShader(VertexInput vertexIn [[stage_in]])
-```
-
-无论采取哪种方式传输数据，应用程序最终都是通过setVertexBuffer来向vertex shader传输参数的。那么vertex shader如何获取数据生成VertexInput结构体？一是在应用程序里提供MTLVertexDescriptor，二是在vertex shader添加[[stage_in]]标记。代码如下
+在应用设置的index，对应vertex shader里的[[buffer(index)]]，[[vertex_id]]表示则当前第几个顶点。这种传输方式有着一个明显的缺点，不够灵活，所以Metal给了另外一种传输方式：
 
 ```swift
 let renderPipelineDesc = MTLRenderPipelineDescriptor()
@@ -146,5 +182,143 @@ mtlVertexDesc.layouts[0].stride = 24
 mtlVertexDesc.layouts[0].stepFunction = .perVertex
 
 renderPipelineDesc.vertexDescriptor = mtlVertexDesc
+
+// ...
+
+encoder.setVertexBuffer(verticsBuffer, offset: 0, index: 0)
 ```
+
+vertex shader对应的函数签名为：
+
+```cpp
+struct VertexOut {
+    float4 position [[position]];
+    float4 color;
+};
+
+struct VertexInput {
+    float3 position [[attribute(0)]];
+    float3 normal [[attribute(1)]];
+};
+
+vertex VertexOut vertexShader(VertexInput vertexIn [[stage_in]])
+```
+
+无论采取哪种方式传输数据，应用程序最终都是通过setVertexBuffer来向vertex shader传输参数的。那么vertex shader如何获取数据生成VertexInput结构体？需要做2件事：  
+
+ 1、在vertex shader函数对应参数后面添加[[stage_in]]属性，[[stage_in]]表示该参数可以从不同的buffer(index)里读取数据，具体哪个属性从哪个buffer里读取由MTLVertexDescriptor设置，比如：  
+
+```swift
+mtlVertexDesc.attributes[0].bufferIndex = 0
+mtlVertexDesc.attributes[1].bufferIndex = 0
+```
+表示VertexInput的两个属性position和normal都从buffer(0)里读取。如果设置
+
+```swift
+mtlVertexDesc.attributes[0].bufferIndex = 0
+mtlVertexDesc.attributes[1].bufferIndex = 1
+```
+则表示VertexInput的position字段从buffer(0)读取，normal字段从buffer(1)读取，这也要求应用需要提供两个vertex buffer。
+
+ 2、在vertex shader里参数类型的每个字段后面添加对应的属性[[attribute(index)]]，index的值就是我们在设置MTLVertexDescriptor时的值，比如这行代码
+ 
+ ```swift
+ mtlVertexDesc.attributes[0].format = .float3
+ ```
+ 表示[[attribute(0)]]的字段必须为float3类型。
+
+MTLVertexDescriptor另外的几个属性值设置如何读取内存。
+
+```swift
+mtlVertexDesc.layouts[0].stride = 24
+mtlVertexDesc.layouts[0].stepFunction = .perVertex
+```
+
+stride设置每个顶点数据的长度，VertexInput由两个float3组成，所以每个顶点数据的长度是24字节，stepFunction设置vertex shader获取这个属性的方式，比如.perVertex表示每个顶点都获取一次，.constant表示这个属性只获取一次，以后都使用这次获取的值。通常我们都使用.perVertex。
+
+```swift
+mtlVertexDesc.attributes[0].offset = 0
+mtlVertexDesc.attributes[1].offset = 12
+```
+
+表示每个属性应从顶点数据里的第几个字节开始读取，VertexInput长度为24个字节，attributes(0)从第0个字节开始读取，attribute(1)从第12个字节开始读取。
+
+如果我们使用2个buffer来存储数据，那代码如下：
+
+```swift
+// make MTLVertexDescriptor
+let mtlVertexDesc = MTLVertexDescriptor()
+        
+// position
+mtlVertexDesc.attributes[0].format = .float3
+mtlVertexDesc.attributes[0].offset = 0
+mtlVertexDesc.attributes[0].bufferIndex = 0
+        
+// normal
+mtlVertexDesc.attributes[1].format = .float3
+mtlVertexDesc.attributes[1].offset = 0
+mtlVertexDesc.attributes[1].bufferIndex = 1
+        
+mtlVertexDesc.layouts[0].stride = 12
+mtlVertexDesc.layouts[0].stepFunction = .perVertex
+        
+mtlVertexDesc.layouts[1].stride = 12
+mtlVertexDesc.layouts[1].stepFunction = .perVertex
+
+// make MDLVertexDescriptor
+let mdlVertexDesc = MDLVertexDescriptor()
+        
+// position
+var attr = MDLVertexAttribute(name: MDLVertexAttributePosition,
+                              format: .float3,
+                              offset: 0,
+                              bufferIndex: 0)
+mdlVertexDesc.addOrReplaceAttribute(attr)
+        
+// normal
+attr = MDLVertexAttribute(name: MDLVertexAttributeNormal,
+                          format: .float3,
+                          offset: 0,
+                          bufferIndex: 1)
+mdlVertexDesc.addOrReplaceAttribute(attr)
+        
+var layout = MDLVertexBufferLayout(stride: 12)
+mdlVertexDesc.layouts[0] = layout
+
+layout = MDLVertexBufferLayout(stride: 12)
+mdlVertexDesc.layouts[1] = layout
+```
+
+##### 2.2 生成Mesh
+
+成功创建好MDLAsset后，就可以用它来生成Mesh，代码如下：
+
+```swift
+(_, self.dragonMeshes) = try! MTKMesh.newMeshes(asset: dragon, device: self.device)
+```
+
+MTKMesh.newMeshes返回两个值，第一个值为[MDLMesh]，在Metal并没有用到，所以忽略它，第二个值为[MTKMesh]，用来完成draw call。在介绍MTKMesh之前我们要先了解什么是Mesh。
+
+现实世界中的物体表面都是由曲面构成的，而在计算机世界里，我们用无数小的三角形去模拟这些曲面，只要数量足够多，我们肉眼看上去就像光滑的曲面。这些三角形共享顶点，我们把这样的拓扑结构叫做三角形网格(Triangle Mesh)。
+
+描述三角形网格一般有两种数据结构：索引三角形网格和扇形或带状三角形网格。索引三角形网格的数据结构可以表示为：
+
+```cpp
+struct IndexedMesh {
+    int index[nt][3];
+    Vectex vecties[nv];
+}
+```
+
+其中vecties表示三角形网格的顶点数据数组，index[i][k]表示第i个三角形的第k个顶点，使用索引三角形网格的好处是该结构简单，同时比直接存储三角形数组的数据结构要省一半的内存。
+
+扇形或带状三角形网格则比索引三角形网格更加节省内存，扇形或带状三角形网格示意图如下：
+
+<img src="ModelIO/triangleFan.jpg" width="420px" height="300px" alt="Triangle Fan" title="Triangle Fan"> 
+
+<img src="ModelIO/triangleStrips.jpg" width="420px" height="300px" alt="Triangle Strips" title="Triangle Strips"> 
+
+以扇形三角形网格为例，只要5个顶点数据就可以完整描述，因此它比索引三角形网格更加节省内存。
+
+了解了什么是Mesh后，我们在来看MTKMesh，查看它的初始化API可以发现，MTKMesh必须配合Model I/O框架使用，MTKMesh本身也不属于Metal，而是MetalKit这个框架下的类。MTKMesh有两个属性值得注意，一个是submeshes，它是MTKSubmesh类型的数组，另一个是vertexBuffers，是MTKMeshBuffer类型的数组。我们在使用调用Metal draw call就是通过这个两个属性来完成绘制的。
 
