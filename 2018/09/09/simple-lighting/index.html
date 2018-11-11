@@ -126,7 +126,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Phong.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpeg">
-<meta property="og:updated_time" content="2018-11-11T09:32:04.697Z">
+<meta property="og:updated_time" content="2018-11-11T11:51:16.150Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="简单光照">
 <meta name="twitter:description" content="要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。">
@@ -388,7 +388,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+                <time title="修改时间：2018-11-11 19:51:16" itemprop="dateModified" datetime="2018-11-11T19:51:16+08:00">2018-11-11</time>
               
             
           </span>
@@ -453,7 +453,8 @@
         <p>要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。</p>
 <a id="more"></a>
 <p>光照模型可以分为两类：全局光照和局部光照。在全局光照模型中，物体表面上一点的颜色不仅受到场景内的光源、物体表面材质等的影响，还受到物体之间相互反射的影响，这些反射可以是多次的。局部光照与此相反，物体表面上一点的颜色只与光源、物体表面材质、物体表面的局部几何性质有关，与场景中的其他表面无关，因此全局光照模型的计算要比局部光照模型复杂的多，但渲染出的效果会更加真实。这里我们只考虑局部光照模型。本文的源码放在了<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>上。</p>
-<h2 id="1-光源"><a href="#1-光源" class="headerlink" title="1. 光源"></a>1. 光源</h2><p>光源可以分为以下几种模型：</p>
+<h2 id="1-光源"><a href="#1-光源" class="headerlink" title="1. 光源"></a>1. 光源</h2><hr>
+<p>光源可以分为以下几种模型：</p>
 <ul>
 <li><p>环境光(Ambient Light)<br>环境光使场景内获得均匀的光照。场景内的物体有时并没有受到光源的直接照射，而我们仍然可以看到这些物体，这是因为物体之间的相互反射，环境光就是对这种现象的一种近似。</p>
 </li>
@@ -464,7 +465,8 @@
 <li><p>远距离光源(Distant Light)<br>当光源距离物体很远时，物体上每个点的入射光线方向都相同，这样的光源就是远距离光源。例如，太阳光对一个物体来说就是远距离光源。</p>
 </li>
 </ul>
-<h3 id="2-物体3种基本的光学性质"><a href="#2-物体3种基本的光学性质" class="headerlink" title="2. 物体3种基本的光学性质"></a>2. 物体3种基本的光学性质</h3><p>光线和材质之间的作用可以分为3类：  </p>
+<h2 id="2-物体3种基本的光学性质"><a href="#2-物体3种基本的光学性质" class="headerlink" title="2. 物体3种基本的光学性质"></a>2. 物体3种基本的光学性质</h2><hr>
+<p>光线和材质之间的作用可以分为3类：  </p>
 <ul>
 <li><p>镜面反射(specular)<br>一个物体如果具有镜面反射的性质，则它看起来是有光泽的，这是因为被反射或者散射(scatter)出去的大多数光线的方向都和反射角都和入射角相近。理想镜面反射的光线反射角等于入射角。</p>
 </li>
@@ -473,7 +475,8 @@
 <li><p>折射(refraction)<br>折射是指光线进入物体并从物体的另一个位置再发射出去。具有折射性质的表面看起来是半透明的。</p>
 </li>
 </ul>
-<h2 id="3-Shading-Model"><a href="#3-Shading-Model" class="headerlink" title="3. Shading Model"></a>3. Shading Model</h2><h3 id="3-1-Lambertian-Shading-Model"><a href="#3-1-Lambertian-Shading-Model" class="headerlink" title="3.1 Lambertian Shading Model"></a>3.1 Lambertian Shading Model</h3><p>Lambertian Shading Model描述物体表面上一点的颜色正比与光源与该点法向量夹角的余弦值:  </p>
+<h2 id="3-Shading-Model"><a href="#3-Shading-Model" class="headerlink" title="3. Shading Model"></a>3. Shading Model</h2><hr>
+<h3 id="3-1-Lambertian-Shading-Model"><a href="#3-1-Lambertian-Shading-Model" class="headerlink" title="3.1 Lambertian Shading Model"></a>3.1 Lambertian Shading Model</h3><p>Lambertian Shading Model描述物体表面上一点的颜色正比与光源与该点法向量夹角的余弦值:  </p>
 <script type="math/tex; mode=display">
 c\propto \cos\theta</script><p>示意图如下: </p>
 <p><img src="/2018/09/09/simple-lighting/Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> </p>
@@ -516,7 +519,8 @@ c=c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.3)</script><p>注意
 <script type="math/tex; mode=display">
 c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l})+c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.4)</script><p>使用(3.3.4)公式渲染得到的效果图如下</p>
 <p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> </p>
-<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a></p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><hr>
+<p>本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a></p>
 
       
     </div>
@@ -718,7 +722,7 @@ c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l})+c_rl_r\space max(0, (\vec{h}\cd
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-光源"><span class="nav-text">1. 光源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-物体3种基本的光学性质"><span class="nav-text">2. 物体3种基本的光学性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Shading-Model"><span class="nav-text">3. Shading Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Lambertian-Shading-Model"><span class="nav-text">3.1 Lambertian Shading Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Ambient-Shading"><span class="nav-text">3.2 Ambient Shading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Phone-Shading"><span class="nav-text">3.3 Phone Shading</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-光源"><span class="nav-text">1. 光源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-物体3种基本的光学性质"><span class="nav-text">2. 物体3种基本的光学性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Shading-Model"><span class="nav-text">3. Shading Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Lambertian-Shading-Model"><span class="nav-text">3.1 Lambertian Shading Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Ambient-Shading"><span class="nav-text">3.2 Ambient Shading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Phone-Shading"><span class="nav-text">3.3 Phone Shading</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
             
 
           </div>

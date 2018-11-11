@@ -132,7 +132,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustum.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/frustumTocube.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/08/04/coordinate-transformation/map.jpg">
-<meta property="og:updated_time" content="2018-11-11T09:54:51.459Z">
+<meta property="og:updated_time" content="2018-11-11T11:49:50.427Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图形学中的坐标变换">
 <meta name="twitter:description" content="从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如何设置物体的位置、方向，大小。熟练掌握向量、矩阵等数学知识，是跨入图形学领域的第一步。">
@@ -394,7 +394,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-11-11 17:54:51" itemprop="dateModified" datetime="2018-11-11T17:54:51+08:00">2018-11-11</time>
+                <time title="修改时间：2018-11-11 19:49:50" itemprop="dateModified" datetime="2018-11-11T19:49:50+08:00">2018-11-11</time>
               
             
           </span>
@@ -458,7 +458,8 @@
       
         <p>从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如何设置物体的位置、方向，大小。熟练掌握向量、矩阵等数学知识，是跨入图形学领域的第一步。</p>
 <a id="more"></a>
-<h2 id="1-数学知识"><a href="#1-数学知识" class="headerlink" title="1. 数学知识"></a>1. 数学知识</h2><p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
+<h2 id="1-数学知识"><a href="#1-数学知识" class="headerlink" title="1. 数学知识"></a>1. 数学知识</h2><hr>
+<p>坐标变化主要用到的数学知识有：向量、矩阵。</p>
 <h3 id="1-1-向量"><a href="#1-1-向量" class="headerlink" title="1.1 向量"></a>1.1 向量</h3><script type="math/tex; mode=display">
 \vec{a}+\vec{b}=\vec{b}+\vec{a}</script><script type="math/tex; mode=display">
 (\vec{a}+\vec{b})+\vec{c}=\vec{a}+(\vec{b}+\vec{c})</script><script type="math/tex; mode=display">
@@ -527,7 +528,8 @@ k(\mathbf{F}+\mathbf{G})=k\mathbf{F}+k\mathbf{G}</script><script type="math/tex;
 <script type="math/tex; mode=display">
 \mathbf{F}\vec{v}_i=\lambda_i\vec{v}_i</script><script type="math/tex; mode=display">
 \mathbf{A}^{-1}F\mathbf{A}=\begin{pmatrix}\lambda_1 & 0 & \cdots & 0\\
-0 & \lambda_2 & \cdots & 0\\\vdots & \vdots & \ddots & \vdots\\0 & 0 & \cdots & \lambda_n\end{pmatrix}</script><h2 id="2-坐标系"><a href="#2-坐标系" class="headerlink" title="2. 坐标系"></a>2. 坐标系</h2><p>在图形学里，经常会碰到以下几个坐标系：物体空间(Object Space)、世界空间(World Space)、观察空间(View Space)、裁剪空间(Clip Space)、标准化设备坐标系(Normalized Device Coordinate, NDC)以及屏幕空间(Screen Space)。以下一一介绍这些坐标系。</p>
+0 & \lambda_2 & \cdots & 0\\\vdots & \vdots & \ddots & \vdots\\0 & 0 & \cdots & \lambda_n\end{pmatrix}</script><h2 id="2-坐标系"><a href="#2-坐标系" class="headerlink" title="2. 坐标系"></a>2. 坐标系</h2><hr>
+<p>在图形学里，经常会碰到以下几个坐标系：物体空间(Object Space)、世界空间(World Space)、观察空间(View Space)、裁剪空间(Clip Space)、标准化设备坐标系(Normalized Device Coordinate, NDC)以及屏幕空间(Screen Space)。以下一一介绍这些坐标系。</p>
 <h3 id="2-1-物体空间"><a href="#2-1-物体空间" class="headerlink" title="2.1 物体空间"></a>2.1 物体空间</h3><p>物体空间是指对象建模时的坐标系，用来描述物体内部之间的位置关系。例如，创建一个球体时，可以选取任意点作为球心，但取坐标系的原点可以简化方程。  </p>
 <h3 id="2-2-世界空间"><a href="#2-2-世界空间" class="headerlink" title="2.2 世界空间"></a>2.2 世界空间</h3><p>当描述多个物体之间的位置关系时，物体空间就不再适用了，需要一个新的坐标系，这个坐标系就是世界空间。  </p>
 <p>世界空间没有任何特殊的地方，可以选取任意坐标系作为世界空间，世界空间和物体空间也是相对的，例如，在描述地球上的物体的位置关系时，可以选择地球作为世界空间，但研究地球与火星的位置关系时，选择太阳作为世界空间就更合适，此时地球空间就转换为了物体空间。</p>
@@ -562,7 +564,8 @@ q=(\frac{x}w,\frac{y}w,\frac{z}w,1)</script><p>裁剪空间通过以上变换�
 0\leq z\leq1</script><h4 id="2-6-屏幕坐标系"><a href="#2-6-屏幕坐标系" class="headerlink" title="2.6 屏幕坐标系"></a>2.6 屏幕坐标系</h4><p>NDC坐标最后还需要通过视口变换(viewport transformation)得到屏幕坐标，屏幕坐标的单位是像素。  </p>
 <p>通过以上介绍可以知道，从3维空间到2维空间的坐标变换是一步一步串联起来的，每一步都对应着一个坐标空间。完整的流程如下图所示:  </p>
 <p><img src="/2018/08/04/coordinate-transformation/transform.jpg" width="400px" height="150px" alt="坐标变换" title="坐标变换">  </p>
-<h2 id="3-坐标变换"><a href="#3-坐标变换" class="headerlink" title="3. 坐标变换"></a>3. 坐标变换</h2><p>复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍一些常用的坐标变换公式。</p>
+<h2 id="3-坐标变换"><a href="#3-坐标变换" class="headerlink" title="3. 坐标变换"></a>3. 坐标变换</h2><hr>
+<p>复杂的坐标变换可以由一系列简单的坐标变换矩阵相乘得到，下面先介绍一些常用的坐标变换公式。</p>
 <h3 id="3-1-仿射坐标系"><a href="#3-1-仿射坐标系" class="headerlink" title="3.1 仿射坐标系"></a>3.1 仿射坐标系</h3><p>坐标系的实质是空间的点到有序数组的对应关系，因此建立坐标系首先需要建立一个参考系，即坐标标架。</p>
 <p>确定一个仿射标架需要3个不共面的向量以及一个定点，我们可以用如下记号表示一个仿射标架:  </p>
 <script type="math/tex; mode=display">
@@ -927,7 +930,8 @@ M=
 0 & \frac{h}{2} & 0 & y+\frac{h}{2}\\
 0 & 0 & \frac{z_{max}-z_{min}}{2} & \frac{z_{max}+z_{min}}{2}\\
 0 & 0 & 0 & 1\\
-\end{pmatrix}</script><h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p><br>本文详细介绍了图形学中常用的数学知识和坐标变换公式，只有理解了这些变换后，才能正确的把物体设置到我们想要的位置。另外不得不提下Mathematica这个软件，本文的推导计算主要靠它完成，非常方便好用，建议大家学习下这款软件。</p>
+\end{pmatrix}</script><h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>—-</p>
+<p>本文详细介绍了图形学中常用的数学知识和坐标变换公式，只有理解了这些变换后，才能正确的把物体设置到我们想要的位置。另外不得不提下Mathematica这个软件，本文的推导计算主要靠它完成，非常方便好用，建议大家学习下这款软件。</p>
 
       
     </div>

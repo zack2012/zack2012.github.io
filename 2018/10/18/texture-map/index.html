@@ -112,13 +112,13 @@
 
 
 
-  <meta name="description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射纹理映射(Texture Mapping">
+  <meta name="description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射 纹理映射(Texture Mappin">
 <meta name="keywords" content="Texture">
 <meta property="og:type" content="article">
 <meta property="og:title" content="纹理映射">
 <meta property="og:url" content="https://loweyu.com/2018/10/18/texture-map/index.html">
 <meta property="og:site_name" content="Lowe">
-<meta property="og:description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射纹理映射(Texture Mapping">
+<meta property="og:description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射 纹理映射(Texture Mappin">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://loweyu.com/2018/10/18/texture-map/cow.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/10/18/texture-map/clamp-to-edge.jpg">
@@ -130,10 +130,10 @@
 <meta property="og:image" content="https://loweyu.com/2018/10/18/texture-map/mipmaps.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/10/18/texture-map/normalMap.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/10/18/texture-map/parallaxMap.jpg">
-<meta property="og:updated_time" content="2018-11-11T09:32:04.698Z">
+<meta property="og:updated_time" content="2018-11-11T11:52:03.989Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="纹理映射">
-<meta name="twitter:description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射纹理映射(Texture Mapping">
+<meta name="twitter:description" content="现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考github。 1. 纹理映射 纹理映射(Texture Mappin">
 <meta name="twitter:image" content="https://loweyu.com/2018/10/18/texture-map/cow.jpg">
 
 
@@ -392,7 +392,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+                <time title="修改时间：2018-11-11 19:52:03" itemprop="dateModified" datetime="2018-11-11T19:52:03+08:00">2018-11-11</time>
               
             
           </span>
@@ -455,7 +455,8 @@
 
       
         <p>现实世界中的物体表面都有着丰富的细节，例如一块石头表面凹凸不平。这就要求我们在绘制图像时每个像素的属性都应该随着物体表面位置的变化而变化。我们可以通过增加模型的顶点数来达到这样的效果，但这样做效率不高，即使一个简单物体可能都需要非常复杂的模型。而使用纹理映射我们可以在不增加模型复杂度的前提下达到同样的效果。完整的源码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>。</p>
-<h2 id="1-纹理映射"><a href="#1-纹理映射" class="headerlink" title="1. 纹理映射"></a>1. 纹理映射</h2><p>纹理映射(Texture Mapping)就是用一张图像存储物体表面的细节，这里的细节可以是渲染方程里的各种参数值，比如diffuse color、normal等，在绘制物体时，将这张图映射到物体表面上。我们可以把这个过程想象为用纸去包装礼物。</p>
+<h2 id="1-纹理映射"><a href="#1-纹理映射" class="headerlink" title="1. 纹理映射"></a>1. 纹理映射</h2><hr>
+<p>纹理映射(Texture Mapping)就是用一张图像存储物体表面的细节，这里的细节可以是渲染方程里的各种参数值，比如diffuse color、normal等，在绘制物体时，将这张图映射到物体表面上。我们可以把这个过程想象为用纸去包装礼物。</p>
 <p>纹理映射用数学语言描述如下：</p>
 <script type="math/tex; mode=display">
 f: (x,y,z)\mapsto(u,v)</script><script type="math/tex; mode=display">
@@ -483,14 +484,16 @@ u,v\in[0, 1]</script><p>纹理映射f将物体表面坐标(x,y,z)映射到纹理
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fragment float4 textureFragment(VertexOut inVertex [[stage_in]],</span><br><span class="line">                                texture2d&lt;float&gt; baseColorTexture [[texture(0)]],</span><br><span class="line">                                sampler textureSampler [[sampler(0)]]) &#123;</span><br><span class="line">    // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>run起来的效果如下:</p>
 <p><img src="/2018/10/18/texture-map/cow-run.jpg" width="300px" height="652px" alt="cow" title="cow"> </p>
-<h2 id="2-mipmaps"><a href="#2-mipmaps" class="headerlink" title="2. mipmaps"></a>2. mipmaps</h2><p>我们把texture上的每个像素称为纹素(texel)，如果屏幕上的像素远大于纹素，即一个像素包含许多个纹素，我们把这种情况称为magnification，反之，如果一个纹素包含许多像素，则这种情况称为minification。</p>
+<h2 id="2-mipmaps"><a href="#2-mipmaps" class="headerlink" title="2. mipmaps"></a>2. mipmaps</h2><hr>
+<p>我们把texture上的每个像素称为纹素(texel)，如果屏幕上的像素远大于纹素，即一个像素包含许多个纹素，我们把这种情况称为magnification，反之，如果一个纹素包含许多像素，则这种情况称为minification。</p>
 <p>一个像素如何决定使用哪个纹素的值？通常有两种做法：最近选取(nearest)和线性滤波(linear)。最近选取就是取离像素中心最近的一个纹素的值，而线性滤波则是取像素周围的的纹素做加权平均后的值。</p>
 <p>在magnification情况下，使用最近选取会使图像看起来一块一块的，使用线性滤波则会增大计算量(一个像素里包含许多的纹素)，为了解决这个问题，引入了mipmaps。</p>
 <p>mip是拉丁文multum in parvo的缩写，对应的英文为much in small。它由一组texture组成，通常情况下，下一级的分辨率是上一级的一半，例如：Level 0: 64 x 64, 1: 32 x 32, 2: 16 x 16, 3: 8 x 8, 4: 4 x 4, 5: 2 x 2, 6: 1 x 1。示意图如下：</p>
 <p><img src="/2018/10/18/texture-map/mipmapsLevel.jpg" width="500px" height="250px" alt="mipmaps level" title="mipmaps level"> </p>
 <p>通过使用mipmaps不仅可以提高绘制效率，还能带来更好的绘制效果:</p>
 <p><img src="/2018/10/18/texture-map/mipmaps.jpg" width="800px" height="400px" alt="mipmaps" title="mipmaps"> </p>
-<h2 id="3-凹凸贴图-Bump-Mapping"><a href="#3-凹凸贴图-Bump-Mapping" class="headerlink" title="3. 凹凸贴图(Bump Mapping)"></a>3. 凹凸贴图(Bump Mapping)</h2><p>凹凸贴图是一组贴图技术的总称，该组贴图技术通过修改渲染方程中的一些参数，在不增加增加额外的几何信息的前提下，就可以达到增强被渲染物体的表面细节的效果，使表面看起来更加真实。</p>
+<h2 id="3-凹凸贴图-Bump-Mapping"><a href="#3-凹凸贴图-Bump-Mapping" class="headerlink" title="3. 凹凸贴图(Bump Mapping)"></a>3. 凹凸贴图(Bump Mapping)</h2><hr>
+<p>凹凸贴图是一组贴图技术的总称，该组贴图技术通过修改渲染方程中的一些参数，在不增加增加额外的几何信息的前提下，就可以达到增强被渲染物体的表面细节的效果，使表面看起来更加真实。</p>
 <p>最早的Bump Mapping通过一张高度贴图(Height Map)记录各像素点的高度信息，通过高度信息计算高度贴图中当前像素与周围像素的高度差，这个高度差就代表了各像素的坡度，用这个坡度信息去绕动法线，得到最终法线。</p>
 <h3 id="3-1-法线贴图-Normal-Mapping"><a href="#3-1-法线贴图-Normal-Mapping" class="headerlink" title="3.1 法线贴图(Normal Mapping)"></a>3.1 法线贴图(Normal Mapping)</h3><p>法线贴图直接将法线存储到到贴图里，使用时不需要像高度贴图那样要再经过额外的计算。法线贴图一般可以通过高多边形模型生成，也可以通过高度贴图计算得到。</p>
 <p><img src="/2018/10/18/texture-map/normalMap.jpg" width="400px" height="300px" alt="制作法线贴图" title="制作法线贴图">   </p>
@@ -514,7 +517,8 @@ rgb=normal.xyz / 2.0 + 0.5</script><p>因为z轴总为正值，所以法线贴�
 p_{adj}=p+\frac{h \cdot v_{xy}}{v_z}</script><p>$v_{xy}$是观察向量在xy平面上的投影。$v_z$是观察向量的z轴分量。视差贴图的推导是基于相邻的点高度相同这个假设的，如果一个点的高度非常陡峭，即相邻两个点的高度差值非常大，则视差贴图就不能用了。</p>
 <p>使用视差贴图可以使图像具有更加明显的深度和真实感。</p>
 <h3 id="3-3-视差遮蔽贴图-Parallax-Occlusion-Mapping"><a href="#3-3-视差遮蔽贴图-Parallax-Occlusion-Mapping" class="headerlink" title="3.3 视差遮蔽贴图(Parallax Occlusion Mapping)"></a>3.3 视差遮蔽贴图(Parallax Occlusion Mapping)</h3><p>视差遮蔽贴图是对视差贴图的改进，它精确的计算与高度贴图定义出来的表面交点，即$p_{ideal}$。视差遮蔽贴图的算法有很多种，对其实现感兴趣的话可以参考<a href="https://segmentfault.com/a/1190000003920502" target="_blank" rel="noopener">这篇文章</a>  </p>
-<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>纹理映射可以说是图形绘制流水线里的一个核心概念，它在不增加太多计算量的同时，极大增强了图像的真实感，丰富了物体表面的细节。这里只是简单的介绍了纹理映射，以后我们还会再回来更加深入的讨论纹理映射。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><hr>
+<p>纹理映射可以说是图形绘制流水线里的一个核心概念，它在不增加太多计算量的同时，极大增强了图像的真实感，丰富了物体表面的细节。这里只是简单的介绍了纹理映射，以后我们还会再回来更加深入的讨论纹理映射。</p>
 
       
     </div>

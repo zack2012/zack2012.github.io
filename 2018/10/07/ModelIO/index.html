@@ -124,7 +124,7 @@
 <meta property="og:image" content="https://loweyu.com/2018/10/07/ModelIO/triangleFan.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/10/07/ModelIO/triangleStrips.jpg">
 <meta property="og:image" content="https://loweyu.com/2018/10/07/ModelIO/dragon.jpg">
-<meta property="og:updated_time" content="2018-11-11T09:32:04.695Z">
+<meta property="og:updated_time" content="2018-11-11T11:50:49.365Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Model I&#x2F;O 介绍">
 <meta name="twitter:description" content="在前面的几篇文章中我们都是手动输入顶点数据(立方体)或者使用代码生成的方式(球面)创建模型，可以看到这种创建模型的方式非常繁琐且极其局限，无法在真正的工程里使用，你能想象用这种方式创建一个人体模型吗？ 从程序员的角度来看，模型数据属于一种资源文件，就像图片资源那样，由专业的人员创建，保存成某种格式的文件，该文件包含了一切必要的数据，例如，顶点坐标、顶点法向量等，我们只">
@@ -386,7 +386,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+                <time title="修改时间：2018-11-11 19:50:49" itemprop="dateModified" datetime="2018-11-11T19:50:49+08:00">2018-11-11</time>
               
             
           </span>
@@ -452,7 +452,8 @@
 <p>从程序员的角度来看，模型数据属于一种资源文件，就像图片资源那样，由专业的人员创建，保存成某种格式的文件，该文件包含了一切必要的数据，例如，顶点坐标、顶点法向量等，我们只要读取这种文件后就可以直接用来绘制。</p>
 <p>本文主要介绍上面提到的3D模型格式以及Apple官方提供的读取模型的库Model I/O，最后通过Model I/O绘制一个复杂的模型。完整的源码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>。</p>
 <a id="more"></a>
-<h2 id="1-3D文件格式"><a href="#1-3D文件格式" class="headerlink" title="1. 3D文件格式"></a>1. 3D文件格式</h2><p>3D文件格式种类繁多，就像图片文件格式一样，这里不打算全部介绍一遍，只介绍我认为比较重要的格式。</p>
+<h2 id="1-3D文件格式"><a href="#1-3D文件格式" class="headerlink" title="1. 3D文件格式"></a>1. 3D文件格式</h2><hr>
+<p>3D文件格式种类繁多，就像图片文件格式一样，这里不打算全部介绍一遍，只介绍我认为比较重要的格式。</p>
 <h3 id="1-1-Alembic"><a href="#1-1-Alembic" class="headerlink" title="1.1 Alembic"></a>1.1 Alembic</h3><p>文件后缀名为.abc, 由大名鼎鼎的<a href="https://baike.baidu.com/item/工业光魔公司/7652141?fromtitle=ILM&amp;fromid=44269&amp;fr=aladdin" target="_blank" rel="noopener">工业光魔ILM</a>、Sony Pictures与Imageworks共同开发的一种开放格式。该格式主要解决的问题是在不同的软件之间共享复杂的动态场景，Alembic不仅能导出模型，还能导出特效，最早开发出来是用在电影cg特效里，后面游戏引擎也开始支持该格式。</p>
 <h3 id="1-2-glTF"><a href="#1-2-glTF" class="headerlink" title="1.2 glTF"></a>1.2 glTF</h3><p>文件后缀名为.gltf，glTF是一种可以减少3D格式中与渲染无关的冗余数据并且在更加适合OpenGL簇加载的一种3D文件格式。它的提出是源自于3D工业和媒体发展的过程中，对3D格式统一化的急迫需求。在其<a href="https://www.khronos.org/gltf/" target="_blank" rel="noopener">官网</a>里把glTF比作三维文件的JPEG。</p>
 <p>glTF使用json格式进行描述，也可以编译成二进制的内容：bglTF。glTF可以包括场景、摄像机、动画等，也可以包括网格、材质、纹理，甚至包括了渲染技术（technique）、着色器以及着色器程序。同时由于json格式的特点，它支持预留一般以及特定供应商的扩展。</p>
@@ -463,7 +464,8 @@
 <p>PLY主要用以储存立体扫描结果的三维数值，透过多边形片面的集合描述三维物体，与其他格式相较之下这是较为简单的方法。它可以储存的资讯包含颜色、透明度、表面法向量、材质座标与资料可信度，并能对多边形的正反两面设定不同的属性。</p>
 <h3 id="1-6-USD"><a href="#1-6-USD" class="headerlink" title="1.6 USD"></a>1.6 USD</h3><p>文件后缀名为.usd，USD全称为Universal Scene Description，该格式由Pixar开发。对于需要稳定地，可扩展地交换和增强由一系列基本asset组成的任意3D场景而言，USD可以满足这种需求。<a href="https://graphics.pixar.com/usd/docs/index.html" target="_blank" rel="noopener">官网</a>有该格式的详细介绍。</p>
 <p>WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，USDZ实质上就是USD格式的压缩版，最后的Z代表着zip，苹果希望USDZ成为AR领域的通用格式。</p>
-<h2 id="2-Model-I-O"><a href="#2-Model-I-O" class="headerlink" title="2. Model I/O"></a>2. Model I/O</h2><p>Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：</p>
+<h2 id="2-Model-I-O"><a href="#2-Model-I-O" class="headerlink" title="2. Model I/O"></a>2. Model I/O</h2><hr>
+<p>Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：</p>
 <p><img src="/2018/10/07/ModelIO/ModelIO.jpg" width="800px" height="400px" alt="Model I/O" title="Model I/O"> </p>
 <p>Model I/O功能强大，这里我们不做全面的介绍，只介绍与导入模型相关的内容，等到以后用到其他功能时再详细展开。</p>
 <h3 id="2-1-导入模型"><a href="#2-1-导入模型" class="headerlink" title="2.1 导入模型"></a>2.1 导入模型</h3><p>使用Model I/O的第一步就是导入模型，代码很简单：</p>
@@ -517,7 +519,8 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">draw</span><span class="params">(encoder: MTLRenderCommandEncoder, meshes: [MTKMesh])</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> mesh <span class="keyword">in</span> meshes &#123;</span><br><span class="line">        <span class="keyword">for</span> (i, meshBuffer) <span class="keyword">in</span> mesh.vertexBuffers.enumerated() &#123;</span><br><span class="line">            encoder.setVertexBuffer(meshBuffer.buffer, offset: meshBuffer.offset, index: i)</span><br><span class="line">        &#125;</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">for</span> submesh <span class="keyword">in</span> mesh.submeshes &#123;</span><br><span class="line">            encoder.drawIndexedPrimitives(type: submesh.primitiveType,</span><br><span class="line">                                          indexCount: submesh.indexCount,</span><br><span class="line">                                          indexType: submesh.indexType,</span><br><span class="line">                                          indexBuffer: submesh.indexBuffer.buffer,</span><br><span class="line">                                          indexBufferOffset: submesh.indexBuffer.offset)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>前面提到，无论是用哪种方式，最后都是要通过setVertexBuffer设置顶点数据，这里我们遍历mesh的vertexBuffers设置顶点数据，mesh.vertexBuffers.count由MDLVertexDescriptor.layouts决定，设置了几个layout的就有几个vertexBuffer。调用draw call的代码非常简单，drawIndexedPrimitives方法的参数都直接对应MTKSubmesh的属性。最后run起来的图如下：</p>
 <p><img src="/2018/10/07/ModelIO/dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> </p>
-<h2 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h2><p>从现在开始，我们终于可以不再绘制立方体、球体这样简单的模型，通过Model I/O导入模型，我们具备绘制任意复杂模型的能力。这里只是使用了Model I/O最基本的功能，随着对图形学的不断深入学习，我们会慢慢用到Model I/O更多的功能。</p>
+<h2 id="3、总结"><a href="#3、总结" class="headerlink" title="3、总结"></a>3、总结</h2><hr>
+<p>从现在开始，我们终于可以不再绘制立方体、球体这样简单的模型，通过Model I/O导入模型，我们具备绘制任意复杂模型的能力。这里只是使用了Model I/O最基本的功能，随着对图形学的不断深入学习，我们会慢慢用到Model I/O更多的功能。</p>
 
       
     </div>
