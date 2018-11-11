@@ -17,6 +17,7 @@ tags:
 <!-- more -->
 
 ## 1. 3D文件格式
+---
 
 3D文件格式种类繁多，就像图片文件格式一样，这里不打算全部介绍一遍，只介绍我认为比较重要的格式。
 
@@ -53,6 +54,7 @@ PLY主要用以储存立体扫描结果的三维数值，透过多边形片面�
 WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，USDZ实质上就是USD格式的压缩版，最后的Z代表着zip，苹果希望USDZ成为AR领域的通用格式。
 
 ## 2. Model I/O
+---
 
 Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
 
@@ -351,5 +353,6 @@ private func draw(encoder: MTLRenderCommandEncoder, meshes: [MTKMesh]) {
 <img src="dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> 
 
 ## 3、总结
+---
 
 从现在开始，我们终于可以不再绘制立方体、球体这样简单的模型，通过Model I/O导入模型，我们具备绘制任意复杂模型的能力。这里只是使用了Model I/O最基本的功能，随着对图形学的不断深入学习，我们会慢慢用到Model I/O更多的功能。

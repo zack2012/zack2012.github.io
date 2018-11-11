@@ -12,6 +12,7 @@ Hello World很可能是绝大多数程序员写的第一个程序，对于图形
 <!-- more -->
 
 ## 1. API
+---
 
 图形学编程中主要有以下几个API：OpenGL、Vulkan、Direct3D、Metal。下面分别介绍。
 
@@ -40,6 +41,7 @@ Apple在2014年的WWDC上公布了Metal，它是一个兼顾图形与计算�
 3、Metal的设计与Vulkan上相似，都是比OpenGL更加低级的API，同时它的学习曲线比Vulkan平缓，学习Metal对日后学习Vulkan也有所帮助。
 
 ## 2. Rendering Pipeline
+---
 
 渲染实质就是这样一个过程，输入一组对象，输出一组像素。根据顺序的不同，渲染大致可以分为两类算法：image order rendering和object order rendering
 
@@ -70,6 +72,7 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。
 
 ## 3. Metal里重要的接口、类
+---
 
 Metal是按面向接口设计的，核心功能都是通过接口提供。下面介绍Metal重要的接口、类。
 
@@ -112,6 +115,7 @@ __8. CAMetalLayer__
 在Metal中，对象被分为持久对象和瞬态对象。创建持久对象需要耗费大量的时间，这些对象应该尽可能早的创建并复用。MTLDevice、MTLCommandQueue、MTLRenderPipelineState就属于这类对象。
 
 ## 4. Hello Triangle 
+---
 
 下面只是部分源码，完整源码可以参考[github](https://github.com/zack2012/MetalGraphics)。
 
@@ -355,6 +359,7 @@ fragment float4 helloTriangleFragment(Vertex inVertex [[stage_in]]) {
 <img src="triangle.jpg" width="300px" height="652px" alt="三角形" title="三角形"> 
 
 ## 5. 绘制立方体
+---
 
 上面我们完成了三角形的绘制，但绘制三角形过于简单，下面我们绘制一个可以旋转的立方体来完整的了解如何绘制一个3D图形。
 
@@ -453,5 +458,6 @@ rotationX, rotationY由外部传入，代码中的数学公式已在[坐标变�
 <img src="Cube.jpg" width="300px" height="652px" alt="立方体" title="立方体"> 
 
 ## 6. 总结
+---
 
 本文简要介绍了现代GPU的渲染流水线和Metal API，完成了绘制三角形和立方体，其中在绘制立方体时可以看到，[坐标变换](2018/08/04/coordinate-transformation/)是非常基础的知识，一定要牢牢掌握。
