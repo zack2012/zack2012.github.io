@@ -304,11 +304,10 @@ img {
   height: auto;
 }
 hr {
-  margin: 40px 0;
-  height: 3px;
+  margin: -10px 0px 10px 0px;
+  height: 1px;
   border: none;
   background-color: #ddd;
-  background-image: repeating-linear-gradient(-45deg, #fff, #fff 4px, transparent 4px, transparent 8px);
 }
 blockquote {
   padding: 0 15px;
@@ -1850,7 +1849,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #7f74cf;
+  background: #b4a71b;
 }
 .links-of-blogroll {
   font-size: 13px;
