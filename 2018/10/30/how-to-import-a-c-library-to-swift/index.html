@@ -120,7 +120,7 @@
 <meta property="og:site_name" content="Lowe">
 <meta property="og:description" content="Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。 本文主要介绍通过Swift Package Manager(SwiftPM)包管理器">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-11-11T09:32:04.696Z">
+<meta property="og:updated_time" content="2018-11-11T11:15:26.815Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何通过Swift Package Manager导入C库">
 <meta name="twitter:description" content="Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。 本文主要介绍通过Swift Package Manager(SwiftPM)包管理器">
@@ -381,7 +381,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+                <time title="修改时间：2018-11-11 19:15:26" itemprop="dateModified" datetime="2018-11-11T19:15:26+08:00">2018-11-11</time>
               
             
           </span>
@@ -968,12 +968,10 @@
           if (results.length > 0) {
             var counter = results[0];
             
-            Counter('put', `/classes/Counter/${counter.objectId}`, JSON.stringify({ time: { "__op":"Increment", "amount":1 } }))
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
             
-            .done(function () {
-                  var $element = $(document.getElementById(url));
-                  $element.find('.leancloud-visitors-count').text(counter.time + 1);
-            })
+            Counter('put', `/classes/Counter/${counter.objectId}`, JSON.stringify({ time: { "__op":"Increment", "amount":1 } }))
             
             .fail(function ({ responseJSON }) {
                 console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
