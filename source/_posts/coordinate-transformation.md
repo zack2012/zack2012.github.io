@@ -1,10 +1,13 @@
 ---
 title: 图形学中的坐标变换
 date: 2018-08-04 11:23:34
+mathjax: true
 categories: 图形学
 ---
 
-从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如果对美术有所了解的话，就会知道这个问题已经在200多年前就被很好的解决了。
+从2D转向3D，首先遇到的问题就是如何在2D平面内表示一个3D物体，如何设置物体的位置、方向，大小。熟练掌握向量、矩阵等数学知识，是跨入图形学领域的第一步。
+
+<!-- more -->
 
 ## 1. 数学知识
 
@@ -65,7 +68,7 @@ $$
 
 $\theta$为向量$\vec{a}$,$\vec{b}$的夹角，如下图所示:  
 
-<img src="coordinate-transformation/dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="向量点积">  
+<img src="dotProduct001.jpg" width="100px" height="100px" alt="向量点积" title="向量点积">  
 
 由点积的公式可以知道，如果两个向量垂直(正交)，则  
 
@@ -119,7 +122,7 @@ $$
 注意，叉积与点积不同，以上定义不能轻易扩展到n维，只适用于3维向量。
 
 向量叉积示意图:  
-<img src="coordinate-transformation/crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="向量叉积">  
+<img src="crossProduct001.jpg" width="150px" height="100px" alt="向量叉积" title="向量叉积">  
 向量叉积产生一个新的向量，该向量与原来的两个向量垂直(正交)，方向满足右手定则。  
 
 由叉积公式可以知道，如果$\vec{a}$, $\vec{b}$平行，则:  
@@ -267,7 +270,7 @@ $$
 
 5、把以上得到向量归一化后我们就得到了观察空间。  
 
-<img src="coordinate-transformation/viewFrame.jpg" width="200px" height="150px" alt="观察坐标系" title="观察坐标系">  
+<img src="viewFrame.jpg" width="200px" height="150px" alt="观察坐标系" title="观察坐标系">  
 
 #### 2.4 裁剪空间  
 
@@ -291,7 +294,7 @@ $$
 
 为了了解规范视见体的另一个优点，我们必须先知道投影规范化(projection normalization)技术。如下图所示:  
 
-<img src="coordinate-transformation/projectnormalization.jpg" width="300px" height="250px" alt="投影规范化" title="投影规范化">  
+<img src="projectnormalization.jpg" width="300px" height="250px" alt="投影规范化" title="投影规范化">  
 
 投影规范化先把对象变形，使得变形后的对象的正交投影与与原来想要得到的投影图相同，这样就把所有的投影都转换为正交投影。这里扭曲变形由规范化矩阵(normalization matrix)来执行。
 
@@ -345,7 +348,7 @@ $$
 
 通过以上介绍可以知道，从3维空间到2维空间的坐标变换是一步一步串联起来的，每一步都对应着一个坐标空间。完整的流程如下图所示:  
 
-<img src="coordinate-transformation/transform.jpg" width="400px" height="150px" alt="坐标变换" title="坐标变换">  
+<img src="transform.jpg" width="400px" height="150px" alt="坐标变换" title="坐标变换">  
 
 ## 3. 坐标变换
 
@@ -443,7 +446,7 @@ s_x & 0   & 0   & 0\\
 $$  
 
 $s_x$, $s_y$, $s_z$可以为负值，如果是负值就是对某个平面的反射。变换示意图如下:  
-<img src="coordinate-transformation/scale.jpg" width="400px" height="150px" alt="缩放" title="缩放">  
+<img src="scale.jpg" width="400px" height="150px" alt="缩放" title="缩放">  
 
 下面我们推导沿任意三个方向($\vec{u}$,$\vec{v}$,$\vec{w}$)缩放($a$,$b$,$c$)的公式.  
 
@@ -573,7 +576,7 @@ $$
 
 我们先考察最简单的情形：不动点为坐标原点，绕z轴旋转。如下图所示:  
 
-<img src="coordinate-transformation/rotate.jpg" width="200px" height="150px" alt="旋转变换" title="旋转变换">  
+<img src="rotate.jpg" width="200px" height="150px" alt="旋转变换" title="旋转变换">  
 
 从上图已知: 
 
@@ -621,7 +624,7 @@ $$
 
 下面我们推导不动点为原点，绕单位向量$\vec{A}$旋转$\theta$的变换公式，如下图所示:  
 
-<img src="coordinate-transformation/rotateAny.jpg" width="180px" height="250px" alt="旋转变换" title="旋转变换">  
+<img src="rotateAny.jpg" width="180px" height="250px" alt="旋转变换" title="旋转变换">  
 
 将$\vec{P}$分解为垂直$\vec{A}$与平行$\vec{A}$的两个分量，旋转不影响平行分量，只影响垂直分量。旋转后的垂直分量为:  
 
@@ -722,7 +725,7 @@ $$
 
 由前面几个小节的可知，这个变换可以通过平移、缩放完成，变换的过程如下图所示:
 
-<img src="coordinate-transformation/cube.jpg" width="500px" height="500px" alt="立方体变换" title="立方体变换">  
+<img src="cube.jpg" width="500px" height="500px" alt="立方体变换" title="立方体变换">  
 
 所以变换矩阵为: 
 
@@ -768,7 +771,7 @@ $$
 
 我们按如下规则建立坐标系：投影中心是坐标系的原点，投影平面平行与z轴且在z轴的负半部分，投影中心到投影平面的距离为$d$($d>0$)，如下图所示: 
 
-<img src="coordinate-transformation/perspect.jpg" width="600px" height="188px" alt="立方体变换" title="立方体变换">  
+<img src="perspect.jpg" width="600px" height="188px" alt="立方体变换" title="立方体变换">  
 
 由上图可知，投影点与被投影点有如下关系:
 
@@ -803,7 +806,7 @@ $$
 
 并不是所有的物体都会在最后图像里显示出来，只有在一定范围内的物体会被显示，这个范围在观察空间是一个截头锥体(frustum)，也被称为视见体，如下图所示:
 
-<img src="coordinate-transformation/frustum.jpg" width="400px" height="180px" alt="视见体" title="视见体"> 
+<img src="frustum.jpg" width="400px" height="180px" alt="视见体" title="视见体"> 
 
 视见体可以由6个参数确定:
 
@@ -884,7 +887,7 @@ $$
 
 视见体经过上面的矩阵变换后得到是一个长方体，如下图所示:  
 
-<img src="coordinate-transformation/frustumTocube.jpg" width="400px" height="180px" alt="透视变换" title="透视变换"> 
+<img src="frustumTocube.jpg" width="400px" height="180px" alt="透视变换" title="透视变换"> 
 
 根据2.4节可知，我们还需要把刚才得到长方体变换为规范视见体(Canonical View Volume)。
 在图形学中，我们把近裁剪面变换到$z=-1$平面，把远裁剪面变换到$z=1$平面上。因此为了套用上面得到的长方体变换公式，我们需要先对z轴做一次反射，即乘以下面这个矩阵:
@@ -976,7 +979,7 @@ $$
 
 下图显示了将观察空间里的z轴如何映射到裁剪空间:
 
-<img src="coordinate-transformation/map.jpg" width="400px" height="283px" alt="透视变换" title="透视变换"> 
+<img src="map.jpg" width="400px" height="283px" alt="透视变换" title="透视变换"> 
 
 
 #### 3.7 视口变换

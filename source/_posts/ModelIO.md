@@ -1,6 +1,7 @@
 ---
 title: Model I/O 介绍
 date: 2018-10-07 09:35:36
+categories: 图形学
 tags: 
     - iOS
     - Metal
@@ -54,7 +55,7 @@ WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，US
 
 Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
 
-<img src="ModelIO/ModelIO.jpg" width="800px" height="400px" alt="Model I/O" title="Model I/O"> 
+<img src="ModelIO.jpg" width="800px" height="400px" alt="Model I/O" title="Model I/O"> 
 
 Model I/O功能强大，这里我们不做全面的介绍，只介绍与导入模型相关的内容，等到以后用到其他功能时再详细展开。
 
@@ -314,9 +315,9 @@ struct IndexedMesh {
 
 扇形或带状三角形网格则比索引三角形网格更加节省内存，扇形或带状三角形网格示意图如下：
 
-<img src="ModelIO/triangleFan.jpg" width="420px" height="300px" alt="Triangle Fan" title="Triangle Fan"> 
+<img src="triangleFan.jpg" width="420px" height="300px" alt="Triangle Fan" title="Triangle Fan"> 
 
-<img src="ModelIO/triangleStrips.jpg" width="420px" height="300px" alt="Triangle Strips" title="Triangle Strips"> 
+<img src="triangleStrips.jpg" width="420px" height="300px" alt="Triangle Strips" title="Triangle Strips"> 
 
 以图中扇形三角形网格为例，只要6个顶点数据就可以完整描述，因此它比索引三角形网格更加节省内存。
 
@@ -346,7 +347,7 @@ private func draw(encoder: MTLRenderCommandEncoder, meshes: [MTKMesh]) {
 
 前面提到，无论是用哪种方式，最后都是要通过setVertexBuffer设置顶点数据，这里我们遍历mesh的vertexBuffers设置顶点数据，mesh.vertexBuffers.count由MDLVertexDescriptor.layouts决定，设置了几个layout的就有几个vertexBuffer。调用draw call的代码非常简单，drawIndexedPrimitives方法的参数都直接对应MTKSubmesh的属性。最后run起来的图如下：
 
-<img src="ModelIO/dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> 
+<img src="dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> 
 
 ## 3、总结
 

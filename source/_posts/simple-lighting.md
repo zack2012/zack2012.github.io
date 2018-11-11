@@ -1,9 +1,10 @@
 ---
 title: 简单光照
 date: 2018-09-09 09:40:51
+mathjax: true
+categories: 图形学
 tags: 
     - Metal
-    - 图形学
 ---
 
 要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。
@@ -49,7 +50,7 @@ $$
 
 示意图如下: 
 
-<img src="simple-lighting/Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> 
+<img src="Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> 
 
 用向量表示:  
 
@@ -75,7 +76,7 @@ $$
 
 渲染的效果如下图所示: 
 
-<img src="simple-lighting/diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> 
+<img src="diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> 
 
 #### 3.2、Ambient Shading
 
@@ -89,7 +90,7 @@ $$
 
 $l_a$是环境光强度，$c_a$是环境光系数。引入环境光后的渲染图如下: 
 
-<img src="simple-lighting/ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="Ambient Shading Model"> 
+<img src="ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="Ambient Shading Model"> 
 
 #### 3.3、Phone Shading
 
@@ -101,7 +102,7 @@ $$
 
 其中$\vec{r}$是理想镜面反射光线的单位向量，$\vec{e}$是观察者方向的单位向量，如下图所示: 
 
-<img src="simple-lighting/Phong.jpg" width="300px" height="260px" alt="Phong Shading Model" title="Phong Shading Model"> 
+<img src="Phong.jpg" width="300px" height="260px" alt="Phong Shading Model" title="Phong Shading Model"> 
 
 从上图中可以推导出:
 
@@ -113,7 +114,7 @@ $$
 
 我们也可以对Phong模型做适当的修改，如下图所示:
 
-<img src="simple-lighting/Blinn-Phong.jpg" width="300px" height="260px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> 
+<img src="Blinn-Phong.jpg" width="300px" height="260px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> 
 
 $\vec{h}$是位于$\vec{l}$, $\vec{e}$的正中间的单位向量，因此有
 
@@ -147,7 +148,7 @@ $$
 
 使用(3.3.4)公式渲染得到的效果图如下
 
-<img src="simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> 
+<img src="Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> 
 
 ## 4、总结
 

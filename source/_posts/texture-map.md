@@ -1,8 +1,9 @@
 ---
 title: 纹理映射
 date: 2018-10-18 07:53:53
+mathjax: true
+categories: 图形学
 tags:
-    - 图形学
     - Texture
 ---
 
@@ -32,7 +33,7 @@ $$
 
 那么这样的纹理映射如何获得呢？一般都是通过专业的软件在建模时获得。这些专业的软件通过给模型表面添加缝(seam)，将物体表面展开成平面图形(uv unwrapping)，给展开后的每个顶点附上(u,v)坐标，随着模型一起导出。这个[视频](https://www.youtube.com/watch?v=scPSP_U858k)(需fq)就是使用blender来设计纹理映射。
 
-<img src="texture-map/cow.jpg" width="800px" height="400px" alt="cow uv unwrapping" title="cow uv unwrapping"> 
+<img src="cow.jpg" width="800px" height="400px" alt="cow uv unwrapping" title="cow uv unwrapping"> 
 
 通常情况下(u,v)坐标的范围在[0,1]之间，但也有一些情况下(u,v)坐标的值可以超出这个范围，超出这个范围时我们有以下几种处理方式：
   1、__Clamp-to-Edge__。这种方式将纹理边缘的颜色不断重复。
@@ -43,13 +44,13 @@ $$
 
 4种方式的示意图如下，源纹理图像是4x4黑白相间的图像。
 
-<img src="texture-map/clamp-to-edge.jpg" width="300px" height="300px" alt="clamp-to-edge" title="clamp-to-edge"> 
+<img src="clamp-to-edge.jpg" width="300px" height="300px" alt="clamp-to-edge" title="clamp-to-edge"> 
 
-<img src="texture-map/clamp-to-zero.jpg" width="300px" height="300px" alt="clamp-to-zero" title="clamp-to-zero"> 
+<img src="clamp-to-zero.jpg" width="300px" height="300px" alt="clamp-to-zero" title="clamp-to-zero"> 
 
-<img src="texture-map/repeat.jpg" width="300px" height="300px" alt="repeat" title="repeat"> 
+<img src="repeat.jpg" width="300px" height="300px" alt="repeat" title="repeat"> 
 
-<img src="texture-map/mirrored-repeat.jpg" width="300px" height="300px" alt="mirrored repeat" title="mirrored repeat"> 
+<img src="mirrored-repeat.jpg" width="300px" height="300px" alt="mirrored repeat" title="mirrored repeat"> 
 
 Metal中使用MetalKit加载texture很简单，代码如下：
 
@@ -169,7 +170,7 @@ fragment float4 textureFragment(VertexOut inVertex [[stage_in]],
 
 run起来的效果如下:
 
-<img src="texture-map/cow-run.jpg" width="300px" height="652px" alt="cow" title="cow"> 
+<img src="cow-run.jpg" width="300px" height="652px" alt="cow" title="cow"> 
 
 ## 2、mipmaps
 
@@ -181,11 +182,11 @@ run起来的效果如下:
 
 mip是拉丁文multum in parvo的缩写，对应的英文为much in small。它由一组texture组成，通常情况下，下一级的分辨率是上一级的一半，例如：Level 0: 64 x 64, 1: 32 x 32, 2: 16 x 16, 3: 8 x 8, 4: 4 x 4, 5: 2 x 2, 6: 1 x 1。示意图如下：
 
-<img src="texture-map/mipmapsLevel.jpg" width="500px" height="250px" alt="mipmaps level" title="mipmaps level"> 
+<img src="mipmapsLevel.jpg" width="500px" height="250px" alt="mipmaps level" title="mipmaps level"> 
 
 通过使用mipmaps不仅可以提高绘制效率，还能带来更好的绘制效果:
 
-<img src="texture-map/mipmaps.jpg" width="800px" height="400px" alt="mipmaps" title="mipmaps"> 
+<img src="mipmaps.jpg" width="800px" height="400px" alt="mipmaps" title="mipmaps"> 
 
 ## 3、凹凸贴图(Bump Mapping)
 
@@ -197,7 +198,7 @@ mip是拉丁文multum in parvo的缩写，对应的英文为much in small。它�
 
 法线贴图直接将法线存储到到贴图里，使用时不需要像高度贴图那样要再经过额外的计算。法线贴图一般可以通过高多边形模型生成，也可以通过高度贴图计算得到。
 
-<img src="texture-map/normalMap.jpg" width="400px" height="300px" alt="制作法线贴图" title="制作法线贴图">   
+<img src="normalMap.jpg" width="400px" height="300px" alt="制作法线贴图" title="制作法线贴图">   
 
 法线贴图里法线坐标是在切空间里，所谓的切空间就是由该点所有切线组成的线性空间。为什么不将法线坐标表示在物体空间或世界空间里？这样在计算光照时就可以少一步变换。在切空间里表示法线有两个好处：  
  * 可以对贴图进行压缩，减少内存占用和传输的带宽。在切空间里，法线的z轴总是正值，同时法线为单位向量，所以我们只要保存两个值(x,y)就可以了，而使用世界空间或物体空间，最少也需要保存3个值。
@@ -225,7 +226,7 @@ $$
 
 视差贴图是对法线贴图的一种改进。使用法线贴图时并没有把视线的方向考虑进去，在真实世界中，如果物体表面高低不平，当视线方向不同时，看到的效果也不相同。
 
-<img src="texture-map/parallaxMap.jpg" width="600px" height="300px" alt="视差贴图" title="视差贴图">   
+<img src="parallaxMap.jpg" width="600px" height="300px" alt="视差贴图" title="视差贴图">   
 
 如果物体表面是凹凸不平的，那我们看到的点应该是$p_{ideal}$，但因为我们使用贴图并没有改变物体的表面，所以我们看到的点是$p$。
 
