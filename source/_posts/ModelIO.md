@@ -16,43 +16,43 @@ tags:
 
 <!-- more -->
 
-### 1、3D文件格式
+## 1. 3D文件格式
 
 3D文件格式种类繁多，就像图片文件格式一样，这里不打算全部介绍一遍，只介绍我认为比较重要的格式。
 
-#### 1.1 Alembic
+### 1.1 Alembic
 
 文件后缀名为.abc, 由大名鼎鼎的[工业光魔ILM](https://baike.baidu.com/item/工业光魔公司/7652141?fromtitle=ILM&fromid=44269&fr=aladdin)、Sony Pictures与Imageworks共同开发的一种开放格式。该格式主要解决的问题是在不同的软件之间共享复杂的动态场景，Alembic不仅能导出模型，还能导出特效，最早开发出来是用在电影cg特效里，后面游戏引擎也开始支持该格式。
 
-#### 1.2 glTF
+### 1.2 glTF
 
 文件后缀名为.gltf，glTF是一种可以减少3D格式中与渲染无关的冗余数据并且在更加适合OpenGL簇加载的一种3D文件格式。它的提出是源自于3D工业和媒体发展的过程中，对3D格式统一化的急迫需求。在其[官网](https://www.khronos.org/gltf/)里把glTF比作三维文件的JPEG。
 
 glTF使用json格式进行描述，也可以编译成二进制的内容：bglTF。glTF可以包括场景、摄像机、动画等，也可以包括网格、材质、纹理，甚至包括了渲染技术（technique）、着色器以及着色器程序。同时由于json格式的特点，它支持预留一般以及特定供应商的扩展。
 
-#### 1.3 STL
+### 1.3 STL
 
 文件后缀名为.stl，STL文件是在计算机图形应用系统中，用于表示三角形网格的一种文件格式。它格式非常简单，只能用于描述三维物体的几何信息，不支持颜色材质等信息。该格式最早发布于1987年，运用领域非常广泛。
 
-#### 1.4 OBJ
+### 1.4 OBJ
 
 文件后缀名为.obj，OBJ文件是Alias|Wavefront公司为它的一套基于工作站的3D建模和动画软件"Advanced Visualizer"开发的一种标准3D模型文件格式，很适合用于3D软件模型之间的互导。目前几乎所有知名的3D软件都支持OBJ文件的读写。OBJ文件是一种文本文件，可以直接用写字板打开进行查看和编辑修改。
 
 OBJ文件除了包含基本模型数据，还附带UV信息及材质路径，但它不包含动画、材质特性、贴图路径、动力学、粒子等信息。主要支持多边形(Polygons)模型。是最受欢迎的格式。
 
-##### 1.5 PLY
+### 1.5 PLY
 
 文件后缀名为.ply，PLY格式全称为Polygon File Format或者 Stanford Triangle Format。它受Wavefront .obj格式的启发，但改进了Obj格式所缺少的对任意属性及群组的扩充性。因此PLY格式发明了"property"及"element"这两个关键词，来概括“顶点、面、相关资讯、群组”的概念。
 
 PLY主要用以储存立体扫描结果的三维数值，透过多边形片面的集合描述三维物体，与其他格式相较之下这是较为简单的方法。它可以储存的资讯包含颜色、透明度、表面法向量、材质座标与资料可信度，并能对多边形的正反两面设定不同的属性。
 
-#### 1.6 USD
+### 1.6 USD
 
 文件后缀名为.usd，USD全称为Universal Scene Description，该格式由Pixar开发。对于需要稳定地，可扩展地交换和增强由一系列基本asset组成的任意3D场景而言，USD可以满足这种需求。[官网](https://graphics.pixar.com/usd/docs/index.html)有该格式的详细介绍。
 
 WWDC 2018上，苹果宣布与Pixar共同开发了一款新的格式USDZ，USDZ实质上就是USD格式的压缩版，最后的Z代表着zip，苹果希望USDZ成为AR领域的通用格式。
 
-### 2、Model I/O
+## 2. Model I/O
 
 Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅可以用来导入、导出、操作3D模型，还可以用来描述灯光,材料和环境，烘焙灯光，细分网格,提供基于物理效果的渲染。Model I/O支持的格式有Alembic、OBJ、PLY、STL、USD。Model I/O与苹果其他的框架(SceneKit、Metal)集成的很好，使用起来非常简单。在开发过程使用Model I/O如下图所示：
 
@@ -60,7 +60,7 @@ Model I/O是苹果在2015年推出的一款处理3D模型的框架，它不仅�
 
 Model I/O功能强大，这里我们不做全面的介绍，只介绍与导入模型相关的内容，等到以后用到其他功能时再详细展开。
 
-#### 2.1 导入模型
+### 2.1 导入模型
 
 使用Model I/O的第一步就是导入模型，代码很简单：
 
@@ -291,7 +291,7 @@ layout = MDLVertexBufferLayout(stride: 12)
 mdlVertexDesc.layouts[1] = layout
 ```
 
-#### 2.2 生成Mesh
+### 2.2 生成Mesh
 
 成功创建好MDLAsset后，就可以用它来生成Mesh，代码如下：
 
@@ -350,6 +350,6 @@ private func draw(encoder: MTLRenderCommandEncoder, meshes: [MTKMesh]) {
 
 <img src="dragon.jpg" width="300px" height="652px" alt="dragon" title="dragon"> 
 
-### 3、总结
+## 3、总结
 
 从现在开始，我们终于可以不再绘制立方体、球体这样简单的模型，通过Model I/O导入模型，我们具备绘制任意复杂模型的能力。这里只是使用了Model I/O最基本的功能，随着对图形学的不断深入学习，我们会慢慢用到Model I/O更多的功能。

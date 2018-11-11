@@ -13,7 +13,7 @@ tags:
 
 光照模型可以分为两类：全局光照和局部光照。在全局光照模型中，物体表面上一点的颜色不仅受到场景内的光源、物体表面材质等的影响，还受到物体之间相互反射的影响，这些反射可以是多次的。局部光照与此相反，物体表面上一点的颜色只与光源、物体表面材质、物体表面的局部几何性质有关，与场景中的其他表面无关，因此全局光照模型的计算要比局部光照模型复杂的多，但渲染出的效果会更加真实。这里我们只考虑局部光照模型。本文的源码放在了[github](https://github.com/zack2012/MetalGraphics)上。
 
-### 1、光源
+## 1. 光源
 
 光源可以分为以下几种模型：
 
@@ -29,7 +29,7 @@ tags:
 * 远距离光源(Distant Light)  
 当光源距离物体很远时，物体上每个点的入射光线方向都相同，这样的光源就是远距离光源。例如，太阳光对一个物体来说就是远距离光源。
 
-### 2、物体3种基本的光学性质
+### 2. 物体3种基本的光学性质
 
 光线和材质之间的作用可以分为3类：  
 * 镜面反射(specular)  
@@ -41,9 +41,9 @@ tags:
 * 折射(refraction)  
 折射是指光线进入物体并从物体的另一个位置再发射出去。具有折射性质的表面看起来是半透明的。
 
-### 3、Shading Model
+## 3. Shading Model
 
-#### 3.1、Lambertian Shading Model
+### 3.1 Lambertian Shading Model
 Lambertian Shading Model描述物体表面上一点的颜色正比与光源与该点法向量夹角的余弦值:  
 
 $$
@@ -80,7 +80,7 @@ $$
 
 <img src="diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> 
 
-#### 3.2、Ambient Shading
+### 3.2 Ambient Shading
 
 从上面的渲染图可以看出，如果只使用diffuse shading，则光源照不到的地方都是黑色的，而在真实环境中，因为到处都是光的反射，所以我们也可以看到光源照不到的地方，因此我们需要对(3.1.2)公式做适当的修改。
 
@@ -94,7 +94,7 @@ $l_a$是环境光强度，$c_a$是环境光系数。引入环境光后的�
 
 <img src="ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="Ambient Shading Model"> 
 
-#### 3.3、Phone Shading
+### 3.3 Phone Shading
 
 一些物体表面看起来会有光泽，这些光泽是由镜面反射产生的。Phone提出了一个近似模型，该模型的计算量只比漫反射多一点。该模型公式如下:  
 
@@ -152,6 +152,6 @@ $$
 
 <img src="Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> 
 
-### 4、总结
+## 4. 总结
 
 本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考[github](https://github.com/zack2012/MetalGraphics)

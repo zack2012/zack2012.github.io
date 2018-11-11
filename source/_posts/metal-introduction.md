@@ -9,23 +9,25 @@ tags:
 
 Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了[github](https://github.com/zack2012/MetalGraphics)上。
 
-### 1、API
+<!-- more -->
+
+## 1. API
 
 图形学编程中主要有以下几个API：OpenGL、Vulkan、Direct3D、Metal。下面分别介绍。
 
-##### 1、 OpenGL
+### 1.1 OpenGL
 
 历史悠久的图形学API，由[Khronos Group](https://www.khronos.org)维护，拥有着最好的跨平台特性，几乎所有的主流平台都支持它，但因为一些历史原因，目前有些不太适应如今的多核时代，但如果你想让你的代码能在各个平台上运行，除了它以外别无选择。OpenGL有着极其丰富的教程资源，如果放在以前，我一定会选择它作来入门。
 
-##### 2、Vulkan
+### 1.2 Vulkan
 
 Vulkan同样由[Khronos Group](https://www.khronos.org)维护，是基于AMD的[Mantle](https://zh.wikipedia.org/wiki/Mantle_(API)构建的，它与OpenGL相比，是一个更加底层的API，能充分利用多个CPU核心，有着更高的执行效率，当然学习曲线也更加陡峭。在跨平台方面，它不如OpenGL，是的，苹果不带它玩，你没法在macOS、iOS上直接使用它，但可以通过[MoltenVK](https://github.com/KhronosGroup/MoltenVK)来实现。
 
-##### 3、Direct3D
+### 1.3 Direct3D
 
 Windows平台上的图形学API，如果你想从事PC游戏软件开发，学习Direct3D是一个很好的选择。
 
-##### 4、Metal
+### 1.4 Metal
 
 Apple在2014年的WWDC上公布了Metal，它是一个兼顾图形与计算功能的，面向底层、低开销的API。
 
@@ -37,7 +39,7 @@ Apple在2014年的WWDC上公布了Metal，它是一个兼顾图形与计算�
 
 3、Metal的设计与Vulkan上相似，都是比OpenGL更加低级的API，同时它的学习曲线比Vulkan平缓，学习Metal对日后学习Vulkan也有所帮助。
 
-### 2、Rendering Pipeline
+## 2. Rendering Pipeline
 
 渲染实质就是这样一个过程，输入一组对象，输出一组像素。根据顺序的不同，渲染大致可以分为两类算法：image order rendering和object order rendering
 
@@ -67,27 +69,27 @@ object order rendering则是遍历每个对象，找到所有受这个对象�
 
 在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。
 
-### 3、Metal里重要的接口、类
+## 3. Metal里重要的接口、类
 
 Metal是按面向接口设计的，核心功能都是通过接口提供。下面介绍Metal重要的接口、类。
 
-__1、MTLDevice__  
+__1. MTLDevice__  
 
 MTLDevice是一个接口，它代表着一个GPU，在图形编程中，把GPU称做device，把CPU称作host。MTLDevice的主要作用就是创建其他重要的接口和类以及查询GPU一些参数
 
-__2、MTLCommandQueue__  
+__2. MTLCommandQueue__  
 
 MTLCommandQueue是一个用来管理command buffer的顺序队列，它是线程安全的。
 
-__3、MTLRenderPipelineState__
+__3. MTLRenderPipelineState__
 
 MTLRenderPipelineState定义了渲染流水线的状态，比如设置vertex和fragment shader。创建MTLRenderPipelineState需要校验一系列状态，这些操作很耗时，所以应尽可能的早的创建MTLRenderPipelineState并复用它们。MTLRenderPipelineState需要用MTLRenderPipelineDescriptor来配置。Metal中有很多这样的Descriptor，用来配置信息。
 
-__4、MTLCommandBuffer__
+__4. MTLCommandBuffer__
 
 MTLCommandBuffer用来存储要提交到GPU执行的命令。一旦调用了commit()方法后，MTLCommandBuffer就不能在往里添加命令了。
 
-__5、MTLRenderCommandEncoder__
+__5. MTLRenderCommandEncoder__
 
  MTLRenderCommandEncoder是用来设置流水线状态和执行图形绘制的命令的协议。通常MTLRenderCommandEncoder需要执行以下任务:  
 * 设置MTLRenderPipelineState。
@@ -95,21 +97,21 @@ __5、MTLRenderCommandEncoder__
 * 设置固定功能的管道(fixed-function state)，比如viewport，depth test，stencil test。
 * 调用绘制命令(draw call)
 
-__6、MTLRenderPassDescriptor__
+__6. MTLRenderPassDescriptor__
 
 MTLRenderPassDescriptor是一组渲染目标(render target)的集合。是一次render pass生成的像素的输出目标。这里有一个很重要的概念就是render pass。  render pass 在Apple文档里描述为更新一组渲染目标的命令集合。一张复杂的图像，可以通过渲染多遍来完成，每一遍只渲染图像的某些部分，最后把这些部分组合在一起形成最终的图像。这一遍就是一次render pass，所以有些图形软件也里也把render pass叫做render layer。在Metal中，一个MTLRenderCommandEncoder对应一次render pass。
 
-__7、MTLTexture__  
+__7. MTLTexture__  
 
 MTLTexture是一片存储格式化图像数据的内存区域，可以被GPU访问。MTLTexure可以用作vertex shader和fragment shader的输入，也可以作为存储渲染流水线输出pixel的地方。
 
-__8、CAMetalLayer__
+__8. CAMetalLayer__
 
 在iOS和macOS上，需要通过CAMetalLayer来把图像显示在屏幕上。CAMetalLayer内部维护了一个用来在屏幕上显示内容的MTLTexture的池子。通过nextDrawable()方法得到一个MTLTexture，作为render pass的渲染目标。
 
 在Metal中，对象被分为持久对象和瞬态对象。创建持久对象需要耗费大量的时间，这些对象应该尽可能早的创建并复用。MTLDevice、MTLCommandQueue、MTLRenderPipelineState就属于这类对象。
 
-### 4、Hello Triangle 
+## 4. Hello Triangle 
 
 下面只是部分源码，完整源码可以参考[github](https://github.com/zack2012/MetalGraphics)。
 
@@ -352,7 +354,7 @@ fragment float4 helloTriangleFragment(Vertex inVertex [[stage_in]]) {
 
 <img src="triangle.jpg" width="300px" height="652px" alt="三角形" title="三角形"> 
 
-### 5、绘制立方体
+## 5. 绘制立方体
 
 上面我们完成了三角形的绘制，但绘制三角形过于简单，下面我们绘制一个可以旋转的立方体来完整的了解如何绘制一个3D图形。
 
@@ -450,6 +452,6 @@ rotationX, rotationY由外部传入，代码中的数学公式已在[坐标变�
 
 <img src="Cube.jpg" width="300px" height="652px" alt="立方体" title="立方体"> 
 
-### 6、总结
+## 6. 总结
 
 本文简要介绍了现代GPU的渲染流水线和Metal API，完成了绘制三角形和立方体，其中在绘制立方体时可以看到，[坐标变换](2018/08/04/coordinate-transformation/)是非常基础的知识，一定要牢牢掌握。

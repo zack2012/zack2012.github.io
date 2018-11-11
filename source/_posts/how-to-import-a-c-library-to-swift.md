@@ -14,7 +14,7 @@ Swift作为一门2014年才正式公布的新语言，各种类型的库非常�
 
 <!-- more -->
 
-### 1、Swift Package Manager
+## 1. Swift Package Manager
 
 SwiftPM作为官方包管理器，随着Swift一起发布。SwiftPM最早由Max Howell开发，你很可能不认识他，但你一定用过它写的包管理工具[homebrew](https://brew.sh)，可惜的是他后面与Apple闹掰了，离开Apple没有再为SwiftPM贡献了。SwiftPM虽然由Apple负责开发，但它目前不支持iOS、watchOS、TVOS，主要的应用领域是编写命令行工具和服务端的开发。
 
@@ -89,7 +89,7 @@ let package = Package(
 
 在这个例子中，我们对外暴露了两个product，一个名为Foo的库和一个名为demo的可执行文件，我们需要指定这个两个product由哪些target组成。设置完product后，需要指定这个package依赖的其他package，语法很简单，一个url地址和版本约束条件。url地址可以是git地址，也可以是本地地址，比如"../CHTTPParser"。最后就是设置这个package由哪些target组成，设置的方式基本与product类似。完整的语法可以参考这个[文档](https://github.com/apple/swift-package-manager/blob/master/Documentation/PackageDescriptionV4.md)
 
-### 2、导入C库
+## 2. 导入C库
 
 目前支持SwiftPM的库大都集中在服务端，引用这部分库非常简单，但我们要在其他领域做一些事时，往往要需要自己导入c库。导入c库有两种方式，从源码编译，或者利用已经编译好的库。
 
@@ -358,6 +358,6 @@ vkDestroyInstance(instance, nil)
 created instance result success
 ```
 
-### 3、总结
+## 3. 总结
 
 swift package manager目前还是很不完善，缺乏文档，不支持iOS，我想这主要原因是Apple的工作重心并不在这上面，Max Howell曾在twitter上提过，目前的工作重心是[llbulid](https://github.com/apple/swift-llbuild)，Apple新写的一套bulid工具，这个构建工具已经成为xcode 10的默认构建工具了。但无论如何，swift package manager作为官方包管理工具，前途可以说是非常光明的。
