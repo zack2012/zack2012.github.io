@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了github上。">
+<meta name="keywords" content="Metal,iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Metal API 介绍">
+<meta property="og:url" content="https://loweyu.com/2018/08/25/metal-introduction/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了github上。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/RenderingPipeline.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/triangle.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/08/25/metal-introduction/Cube.jpg">
+<meta property="og:updated_time" content="2018-11-11T09:32:04.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Metal API 介绍">
+<meta name="twitter:description" content="Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了github上。">
+<meta name="twitter:image" content="https://loweyu.com/2018/08/25/metal-introduction/RenderingPipeline.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://loweyu.com/2018/08/25/metal-introduction/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Metal API 介绍 | Lowe</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lowe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://loweyu.com/2018/08/25/metal-introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lowe">
+      <meta itemprop="description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lowe">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Metal API 介绍
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-08-25 14:37:47" itemprop="dateCreated datePublished" datetime="2018-08-25T14:37:47+08:00">2018-08-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/图形学/" itemprop="url" rel="index"><span itemprop="name">图形学</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Hello World很可能是绝大多数程序员写的第一个程序，对于图形学程序员也有这样的一个Hello World，那就是画一个三角形。在开始编程之前，我们还需要了解一些其他的东西。本文的源码放在了<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>上。</p>
+<a id="more"></a>
+<h2 id="1-API"><a href="#1-API" class="headerlink" title="1. API"></a>1. API</h2><p>图形学编程中主要有以下几个API：OpenGL、Vulkan、Direct3D、Metal。下面分别介绍。</p>
+<h3 id="1-1-OpenGL"><a href="#1-1-OpenGL" class="headerlink" title="1.1 OpenGL"></a>1.1 OpenGL</h3><p>历史悠久的图形学API，由<a href="https://www.khronos.org" target="_blank" rel="noopener">Khronos Group</a>维护，拥有着最好的跨平台特性，几乎所有的主流平台都支持它，但因为一些历史原因，目前有些不太适应如今的多核时代，但如果你想让你的代码能在各个平台上运行，除了它以外别无选择。OpenGL有着极其丰富的教程资源，如果放在以前，我一定会选择它作来入门。</p>
+<h3 id="1-2-Vulkan"><a href="#1-2-Vulkan" class="headerlink" title="1.2 Vulkan"></a>1.2 Vulkan</h3><p>Vulkan同样由<a href="https://www.khronos.org" target="_blank" rel="noopener">Khronos Group</a>维护，是基于AMD的<a href="https://zh.wikipedia.org/wiki/Mantle_(API" target="_blank" rel="noopener">Mantle</a>构建的，它与OpenGL相比，是一个更加底层的API，能充分利用多个CPU核心，有着更高的执行效率，当然学习曲线也更加陡峭。在跨平台方面，它不如OpenGL，是的，苹果不带它玩，你没法在macOS、iOS上直接使用它，但可以通过<a href="https://github.com/KhronosGroup/MoltenVK" target="_blank" rel="noopener">MoltenVK</a>来实现。</p>
+<h3 id="1-3-Direct3D"><a href="#1-3-Direct3D" class="headerlink" title="1.3 Direct3D"></a>1.3 Direct3D</h3><p>Windows平台上的图形学API，如果你想从事PC游戏软件开发，学习Direct3D是一个很好的选择。</p>
+<h3 id="1-4-Metal"><a href="#1-4-Metal" class="headerlink" title="1.4 Metal"></a>1.4 Metal</h3><p>Apple在2014年的WWDC上公布了Metal，它是一个兼顾图形与计算功能的，面向底层、低开销的API。</p>
+<p>选择Metal作为入门的API有以下几个原因：</p>
+<p>1、iOS、macOS虽然支持OpenGL，但实际上已经有几年的时间没有维护了,2018 WWDC苹果宣布废弃OpenGL，有兴趣的可以看看Hacker News上的<a href="https://news.ycombinator.com/item?id=17231442" target="_blank" rel="noopener">讨论</a>。我猜在macOS上Apple不敢彻底移除OpenGL，但在iOS上Apple是有可能的。  </p>
+<p>2、在macOS上，与Metal相关的工具链很完善，每年都在不断的改进，另外作为一名iOS开发，各种工具都已经很熟悉了，开箱即用，不会在环境配置上浪费时间，可以把经精力集中在图形学的学习上。</p>
+<p>3、Metal的设计与Vulkan上相似，都是比OpenGL更加低级的API，同时它的学习曲线比Vulkan平缓，学习Metal对日后学习Vulkan也有所帮助。</p>
+<h2 id="2-Rendering-Pipeline"><a href="#2-Rendering-Pipeline" class="headerlink" title="2. Rendering Pipeline"></a>2. Rendering Pipeline</h2><p>渲染实质就是这样一个过程，输入一组对象，输出一组像素。根据顺序的不同，渲染大致可以分为两类算法：image order rendering和object order rendering</p>
+<p>image order rendering遍历每个像素，找到对这个像素有影响的所有物体，并计算颜色。光线追踪就是一种image order rendering算法。image order rendering渲染的优势是能实现照片级别的渲染，实现更为逼真的阴影、发射等效果。缺点就是计算量大，无法实现实时渲染。(2018.8.20，Nvidia发布了GeForce RTX 20 Series系列显卡，这是世界上首块支持实时光线追踪的显卡)</p>
+<p>object order rendering则是遍历每个对象，找到所有受这个对象影响的像素，更新这些像素的颜色。它的优点是运行效率高，支持实时渲染。缺点就是渲染效果较差。</p>
+<p>Metal是基于object order rendering，所以下面我们介绍基于object order rendering的渲染流水线。Metal流水线如下图所示:</p>
+<p><img src="/2018/08/25/metal-introduction/RenderingPipeline.jpg" width="150px" height="600px" alt="渲染流水线" title="渲染流水线">  </p>
+<p>1、渲染流水线开始前需要准备顶点相关的数据，比如顶点坐标、顶点颜色等。  </p>
+<p>2、Vertex Shader阶段是可编程的，它接收前面提供的顶点数据，计算出一组新的顶点数据。Vertex Shader输出的顶点坐标是在裁剪空间下的。</p>
+<p>3、Tessellation中文为曲面细分，它的作用简单的说就是产生更多的顶点，顶点数越多，则三角形越多，生成的图像越细腻。Tessellation阶段也是可编程的  </p>
+<p>4、Vertex Post-Processing阶段主要是进行裁剪、透视除法、视口转换等操作</p>
+<p>5、Primitive Assembly阶段是把前面输出的顶点数据集合在一起组成图元，输出一个有序的简单图元（点、线、三角形）序列。  </p>
+<p>6、Rasterization光栅化，它是渲染流水线的核心阶段，遍历每个被图元覆盖的像素，用顶点数据对这些像素进行插值，它的输出是一组fragment。fragment是一组状态的集合，用于计算一个像素的最终数据。</p>
+<p>7、Fragment Shader阶段是可编程的，它接受Rasterization输出的fragment，输出一个像素的颜色。  </p>
+<p>8、Per-Fragment Processing是将Fragment Shader输出的结果在经过一些处理，包括Scissor Test、Stencil Test、Depth Test、Blending、Logical Operation、Write Mask。</p>
+<p>在Metal中，不可编程的阶段通常通过设置一些状态值来控制其过程，比如我们可以选择是否开启Depth Test。而可编程阶段则需要我们写shader来进行控制。Metal使用的shader语言是Metal Performance Shaders(MPS)，它是基于C++14开发的。</p>
+<h2 id="3-Metal里重要的接口、类"><a href="#3-Metal里重要的接口、类" class="headerlink" title="3. Metal里重要的接口、类"></a>3. Metal里重要的接口、类</h2><p>Metal是按面向接口设计的，核心功能都是通过接口提供。下面介绍Metal重要的接口、类。</p>
+<p><strong>1. MTLDevice</strong>  </p>
+<p>MTLDevice是一个接口，它代表着一个GPU，在图形编程中，把GPU称做device，把CPU称作host。MTLDevice的主要作用就是创建其他重要的接口和类以及查询GPU一些参数</p>
+<p><strong>2. MTLCommandQueue</strong>  </p>
+<p>MTLCommandQueue是一个用来管理command buffer的顺序队列，它是线程安全的。</p>
+<p><strong>3. MTLRenderPipelineState</strong></p>
+<p>MTLRenderPipelineState定义了渲染流水线的状态，比如设置vertex和fragment shader。创建MTLRenderPipelineState需要校验一系列状态，这些操作很耗时，所以应尽可能的早的创建MTLRenderPipelineState并复用它们。MTLRenderPipelineState需要用MTLRenderPipelineDescriptor来配置。Metal中有很多这样的Descriptor，用来配置信息。</p>
+<p><strong>4. MTLCommandBuffer</strong></p>
+<p>MTLCommandBuffer用来存储要提交到GPU执行的命令。一旦调用了commit()方法后，MTLCommandBuffer就不能在往里添加命令了。</p>
+<p><strong>5. MTLRenderCommandEncoder</strong></p>
+<p> MTLRenderCommandEncoder是用来设置流水线状态和执行图形绘制的命令的协议。通常MTLRenderCommandEncoder需要执行以下任务:  </p>
+<ul>
+<li>设置MTLRenderPipelineState。</li>
+<li>设置提供给vertex shader和fragment shader需要的资源，比如顶点信息，坐标变化矩阵。</li>
+<li>设置固定功能的管道(fixed-function state)，比如viewport，depth test，stencil test。</li>
+<li>调用绘制命令(draw call)</li>
+</ul>
+<p><strong>6. MTLRenderPassDescriptor</strong></p>
+<p>MTLRenderPassDescriptor是一组渲染目标(render target)的集合。是一次render pass生成的像素的输出目标。这里有一个很重要的概念就是render pass。  render pass 在Apple文档里描述为更新一组渲染目标的命令集合。一张复杂的图像，可以通过渲染多遍来完成，每一遍只渲染图像的某些部分，最后把这些部分组合在一起形成最终的图像。这一遍就是一次render pass，所以有些图形软件也里也把render pass叫做render layer。在Metal中，一个MTLRenderCommandEncoder对应一次render pass。</p>
+<p><strong>7. MTLTexture</strong>  </p>
+<p>MTLTexture是一片存储格式化图像数据的内存区域，可以被GPU访问。MTLTexure可以用作vertex shader和fragment shader的输入，也可以作为存储渲染流水线输出pixel的地方。</p>
+<p><strong>8. CAMetalLayer</strong></p>
+<p>在iOS和macOS上，需要通过CAMetalLayer来把图像显示在屏幕上。CAMetalLayer内部维护了一个用来在屏幕上显示内容的MTLTexture的池子。通过nextDrawable()方法得到一个MTLTexture，作为render pass的渲染目标。</p>
+<p>在Metal中，对象被分为持久对象和瞬态对象。创建持久对象需要耗费大量的时间，这些对象应该尽可能早的创建并复用。MTLDevice、MTLCommandQueue、MTLRenderPipelineState就属于这类对象。</p>
+<h2 id="4-Hello-Triangle"><a href="#4-Hello-Triangle" class="headerlink" title="4. Hello Triangle"></a>4. Hello Triangle</h2><p>下面只是部分源码，完整源码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>。</p>
+<p>我们先创建一个用来表示顶点数据的struct，包含顶点位置(单位为像素)和颜色</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">struct Vertex &#123;</span><br><span class="line">    /// 顶点位置，单位像素</span><br><span class="line">    var position: float4</span><br><span class="line">    </span><br><span class="line">    /// 顶点颜色，RGBA</span><br><span class="line">    var color: float4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由前面可知，我们需要一个CAMetalLayer来显示内容，我们将其分装在一个自定义的UIView类里:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloTriangleView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> metalLayer: <span class="type">CAMetalLayer</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> layer <span class="keyword">as</span>! <span class="type">CAMetalLayer</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="class"><span class="keyword">class</span> <span class="title">var</span> <span class="title">layerClass</span>: <span class="title">AnyClass</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">CAMetalLayer</span>.<span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>出于方便的考虑，我们把一些不属于View的内容也放在HelloTriangleView里，后面我们会它拆分为两个类，使view可以复用。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloTriangleView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="comment">/// .....</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> device: <span class="type">MTLDevice</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> pipelineState: <span class="type">MTLRenderPipelineState</span>!</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> commandQueue: <span class="type">MTLCommandQueue</span>!</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> displayLink: <span class="type">CADisplayLink</span>?</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 顶点数据，单位像素</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">let</span> vertices: [<span class="type">Vertex</span>] = [</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(<span class="number">0</span>, <span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(-<span class="number">250</span>, -<span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(<span class="number">250</span>, -<span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">    ]</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 存储顶点数据的buffer</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> vertexBuffer: <span class="type">MTLBuffer</span>?</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/// 存储坐标变换矩阵的buffer</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> matrixBuffer: <span class="type">MTLBuffer</span>?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>初始化方法如下: </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloTriangleView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">init</span>(frame: <span class="type">CGRect</span>) &#123;</span><br><span class="line">        <span class="keyword">self</span>.device = <span class="type">MTLCreateSystemDefaultDevice</span>()!</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> scale = <span class="type">UIScreen</span>.main.scale</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Metal不用point，而使用pixel，所以这里需要将point转换为pixel</span></span><br><span class="line">        <span class="keyword">let</span> drawableSize = frame.size.applying(<span class="type">CGAffineTransform</span>(scaleX: scale, y: scale))</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 设置顶点数据，三角形的中心在屏幕的原点</span></span><br><span class="line">        <span class="keyword">let</span> midX = <span class="type">Float</span>(drawableSize.width / <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">let</span> midY = <span class="type">Float</span>(drawableSize.height / <span class="number">2</span>)</span><br><span class="line">        vertices = [</span><br><span class="line">            <span class="type">Vertex</span>(position: float4(midX, midY + <span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">            <span class="type">Vertex</span>(position: float4(midX - <span class="number">250</span>, midY - <span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">            <span class="type">Vertex</span>(position: float4(midX + <span class="number">250</span>, midY - <span class="number">250</span>, <span class="number">0</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">        ]</span><br><span class="line">        <span class="comment">// ......</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 设置从屏幕空间变化到裁剪空间的变换矩阵</span></span><br><span class="line">        <span class="keyword">var</span> mat = float4x4(diagonal: float4(<span class="type">Float</span>(<span class="number">2</span> / drawableSize.width),</span><br><span class="line">                                            <span class="type">Float</span>(<span class="number">2</span> / drawableSize.height),</span><br><span class="line">                                            <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">let</span> length = <span class="type">MemoryLayout</span>.<span class="built_in">stride</span>(ofValue: mat)</span><br><span class="line">        <span class="built_in">withUnsafePointer</span>(to: &amp;mat) &#123;</span><br><span class="line">            <span class="keyword">self</span>.matrixBuffer = device.makeBuffer(bytes: $<span class="number">0</span>,</span><br><span class="line">                                                  length: length,</span><br><span class="line">                                                  options: .storageModeShared)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 获取vertex shader和fragment shader，用于设置render pipeline</span></span><br><span class="line">        <span class="keyword">let</span> library = device.makeDefaultLibrary()</span><br><span class="line">        <span class="keyword">let</span> vertexFun = library?.makeFunction(name: <span class="string">"helloTriangleShader"</span>)</span><br><span class="line">        <span class="keyword">let</span> fragmentFun = library?.makeFunction(name: <span class="string">"helloTriangleFragment"</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 创建render pipeline</span></span><br><span class="line">        <span class="keyword">let</span> pipelineDesc = <span class="type">MTLRenderPipelineDescriptor</span>()</span><br><span class="line">        pipelineDesc.vertexFunction = vertexFun</span><br><span class="line">        pipelineDesc.fragmentFunction = fragmentFun</span><br><span class="line">        pipelineDesc.colorAttachments[<span class="number">0</span>].pixelFormat = metalLayer.pixelFormat</span><br><span class="line">        pipelineState = <span class="keyword">try</span>! device.makeRenderPipelineState(descriptor: pipelineDesc)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 创建commandQueue</span></span><br><span class="line">        commandQueue = device.makeCommandQueue()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>vertex shader要求输出的顶点坐标是在裁剪空间下，而我们提供的坐标是屏幕坐标，根据<a href="2018/08/04/coordinate-transformation/">坐标变换</a>可知，从NDC变换到屏幕空间的矩阵为:</p>
+<script type="math/tex; mode=display">
+M = \begin{pmatrix}
+\frac{w}{2} & 0 & 0 & x+\frac{w}{2}\\
+0 & \frac{h}{2} & 0 & y+\frac{h}{2}\\
+0 & 0 & \frac{z_{max}-z_{min}}{2} & \frac{z_{max}+z_{min}}{2}\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}</script><p>因为只是在画一个二维图形，可以认为NDC与裁剪空间的坐标相同，视口的原点默认为0。所以我们有: </p>
+<script type="math/tex; mode=display">
+x=0</script><script type="math/tex; mode=display">
+y=0</script><script type="math/tex; mode=display">
+z_{max}=-z_{min}</script><script type="math/tex; mode=display">
+w=1</script><p>带入得到从裁剪空间到屏幕坐标系的变换矩阵:  </p>
+<script type="math/tex; mode=display">
+M = \begin{pmatrix}
+\frac{w}{2} & 0 & 0 & \frac{w}{2}\\
+0 & \frac{h}{2} & 0 & \frac{h}{2}\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}</script><p>对这个矩阵求逆，得:</p>
+<script type="math/tex; mode=display">
+M^{-1} = \begin{pmatrix}
+\frac{2}{w} & 0 & 0 & -1\\
+0 & \frac{2}{h} & 0 & -1\\
+0 & 0 & 1 & 0\\
+0 & 0 & 0 & 1\\
+\end{pmatrix}</script><p>绘制三角形的代码如下:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">redraw</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 获取下一个空闲的texture，当作渲染目标</span></span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> drawable = metalLayer.nextDrawable() <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">let</span> texture = drawable.texture</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 设置render pass</span></span><br><span class="line">    <span class="keyword">let</span> passDesc = <span class="type">MTLRenderPassDescriptor</span>()</span><br><span class="line">    passDesc.colorAttachments[<span class="number">0</span>].texture = texture</span><br><span class="line">    passDesc.colorAttachments[<span class="number">0</span>].loadAction = .clear</span><br><span class="line">    passDesc.colorAttachments[<span class="number">0</span>].storeAction = .store</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">guard</span> <span class="keyword">let</span> commandBuffer = commandQueue.makeCommandBuffer() <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">let</span> encoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDesc)</span><br><span class="line">        </span><br><span class="line">    encoder?.setRenderPipelineState(pipelineState)</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 给shader vertex传入参数</span></span><br><span class="line">    encoder?.setVertexBuffer(vertexBuffer, offset: <span class="number">0</span>, index: <span class="number">0</span>)</span><br><span class="line">    encoder?.setVertexBuffer(matrixBuffer, offset: <span class="number">0</span>, index: <span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 调用draw call，绘制三角形</span></span><br><span class="line">    encoder?.drawPrimitives(type: .triangle, vertexStart: <span class="number">0</span>, vertexCount: <span class="number">3</span>)</span><br><span class="line">    encoder?.endEncoding()</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 尽可能早的展示绘制内容</span></span><br><span class="line">    commandBuffer.present(drawable)</span><br><span class="line">        </span><br><span class="line">    <span class="comment">// 提交commandBuffer，commandBuffer提交后就不能继续使用了</span></span><br><span class="line">    commandBuffer.commit()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>值得注意的有以下几点： </p>
+<ul>
+<li>设置render pass需要从CAMediaLayer获取可用于显示的texture。</li>
+<li>app给shader传参是通过ArgumentBuffer进行的，例如顶点数据设置在buffer 0，变换矩阵设置在buffer 1</li>
+<li>调用drawPrimitives来完成绘制图像，metal只支持点、线、三角形这三种基本图元。</li>
+<li>想要显示图像必须调用commandBuffer的present()方法。</li>
+</ul>
+<p>最后是shader的代码:  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;metal_stdlib&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> metal;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Vertex</span> &#123;</span></span><br><span class="line">    float4 position [[position]];</span><br><span class="line">    float4 color;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Uniforms</span> &#123;</span></span><br><span class="line">    float4x4 modelViewProjectionMatrix;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">vertex Vertex helloTriangleShader(device Vertex *vertices [[buffer(0)]],</span><br><span class="line">                                  constant Uniforms *uniforms [[buffer(<span class="number">1</span>)]],</span><br><span class="line">                                  uint vid [[vertex_id]]) &#123;</span><br><span class="line">    Vertex out;</span><br><span class="line">    <span class="keyword">auto</span> vtx = vertices[vid];</span><br><span class="line">    out.position = uniforms-&gt;modelViewProjectionMatrix * vtx.position;</span><br><span class="line">    out.color = vtx.color;</span><br><span class="line">    <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">fragment float4 <span class="title">helloTriangleFragment</span><span class="params">(Vertex inVertex [[stage_in]])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> inVertex.color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Metal的shader是基于c++14的，所以看起来与c++有点相似。函数前的vertex、fragement关键字表示是vertex shader还是fragment shader。需要自定义结构体来接受app传入的数据，注意，这里定义的结构体内存布局应该与app传进来的内存布局相同。[[xxx]]表示属性，例如[[position]]表示该属性所修饰的变量为顶点坐标的位置，[[buffer(0)]]表示外部传入的第0个buffer，这里对应就是外部传入的顶点数据。Metal里还有很多属性，具体可以参考<a href="https://developer.apple.com/metal/Metal-Shading-Language-Specification.pdf" target="_blank" rel="noopener">官方文档</a></p>
+<p>代码跑起来的结果如下:</p>
+<p><img src="/2018/08/25/metal-introduction/triangle.jpg" width="300px" height="652px" alt="三角形" title="三角形"> </p>
+<h2 id="5-绘制立方体"><a href="#5-绘制立方体" class="headerlink" title="5. 绘制立方体"></a>5. 绘制立方体</h2><p>上面我们完成了三角形的绘制，但绘制三角形过于简单，下面我们绘制一个可以旋转的立方体来完整的了解如何绘制一个3D图形。</p>
+<p>在绘制三角形时，我们把绘制逻辑放在了view里，更好的做法是把绘制逻辑和view分离开来，使得view可以被复用。view将绘制委托给Renderer类，而view只提供render pass，代码如下:  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">CubeViewDelegate</span>: <span class="title">class</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">drawInView</span><span class="params">(<span class="number">_</span> view: CubeView)</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CubeView</span>: <span class="title">UIView</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">renderPass</span><span class="params">()</span></span> -&gt; (desc: <span class="type">MTLRenderPassDescriptor</span>, drawable: <span class="type">CAMetalDrawable</span>?) &#123;</span><br><span class="line">        <span class="keyword">let</span> drawable = metalLayer.nextDrawable()</span><br><span class="line">        <span class="keyword">let</span> passDesc = <span class="type">MTLRenderPassDescriptor</span>()</span><br><span class="line">        passDesc.colorAttachments[<span class="number">0</span>].texture = drawable?.texture</span><br><span class="line">        passDesc.colorAttachments[<span class="number">0</span>].clearColor = <span class="type">MTLClearColor</span>(red: <span class="number">0</span>, green: <span class="number">0</span>, blue: <span class="number">0</span>, alpha: <span class="number">1</span>)</span><br><span class="line">        passDesc.colorAttachments[<span class="number">0</span>].loadAction = .clear</span><br><span class="line">        passDesc.colorAttachments[<span class="number">0</span>].storeAction = .store</span><br><span class="line">        </span><br><span class="line">        passDesc.depthAttachment.texture = <span class="keyword">self</span>.depthTexture</span><br><span class="line">        passDesc.depthAttachment.clearDepth = <span class="number">1</span></span><br><span class="line">        passDesc.depthAttachment.loadAction = .clear</span><br><span class="line">        passDesc.depthAttachment.storeAction = .dontCare</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> (passDesc, drawable)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>绘制立方体的流程与绘制三角形大体上是一样的。首页要准备顶点数据:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CubeRenderer</span> &#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 顶点数据</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">let</span> vertices = [</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(-<span class="number">1</span>,  <span class="number">1</span>,  <span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(-<span class="number">1</span>, -<span class="number">1</span>,  <span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4( <span class="number">1</span>, -<span class="number">1</span>,  <span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4( <span class="number">1</span>,  <span class="number">1</span>,  <span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)),</span><br><span class="line">        </span><br><span class="line">        <span class="type">Vertex</span>(position: float4(-<span class="number">1</span>,  <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4(-<span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4( <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">        <span class="type">Vertex</span>(position: float4( <span class="number">1</span>,  <span class="number">1</span>, -<span class="number">1</span>, <span class="number">1</span>), color: float4(<span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>)),</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 顶点数据索引</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">let</span> <span class="built_in">indices</span>: [<span class="type">UInt16</span>] = [</span><br><span class="line">        <span class="number">3</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">3</span>,</span><br><span class="line">        <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">4</span>,</span><br><span class="line">        <span class="number">4</span>, <span class="number">0</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">4</span>,</span><br><span class="line">        <span class="number">1</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">6</span>, <span class="number">2</span>, <span class="number">1</span>,</span><br><span class="line">        <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>,</span><br><span class="line">        <span class="number">7</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">7</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>metal只能绘制三角形，一个立方体需要绘制12个三角形，一共36个顶点，但确定一个立方体只要8个顶点就够了，因此需要顶点索引buffer，这样就不会浪费存储空间了。顶点索引是有顺序的，从外向内看去为逆时针。</p>
+<p>另外，我们需要一个矩阵将物体空间变换到裁剪空间，代码如下: </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">CubeRenderer</span> &#123;</span><br><span class="line">    <span class="comment">// ......</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">func</span> <span class="title">updateUniformBuffer</span><span class="params">(view: CubeView)</span></span> &#123;</span><br><span class="line">        <span class="keyword">let</span> scaleFactor: <span class="type">Float</span> = <span class="number">0.8</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> rotate1 = <span class="type">Math</span>.matrixRotation(axis: float3(<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>), angle: rotationX)</span><br><span class="line">        <span class="keyword">let</span> rotate2 = <span class="type">Math</span>.matrixRotation(axis: float3(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>), angle: rotationY)</span><br><span class="line">        <span class="keyword">let</span> scale = <span class="type">Math</span>.matrixScale(scaleFactor)</span><br><span class="line">        <span class="keyword">let</span> translate = <span class="type">Math</span>.matrixTranslate(x: <span class="number">0</span>, y: <span class="number">0</span>, z: -<span class="number">5</span>)</span><br><span class="line">        <span class="keyword">let</span> size = view.metalLayer.drawableSize</span><br><span class="line">        <span class="keyword">let</span> apsect = <span class="type">Float</span>(size.width / size.height)</span><br><span class="line">        <span class="keyword">let</span> projection = <span class="type">Math</span>.matrixPerspective(aspect: apsect, fovy: <span class="number">72</span>.radian, near: <span class="number">1</span>, far: <span class="number">100</span>)</span><br><span class="line">        <span class="keyword">let</span> mat = projection * translate * rotate2 * rotate1 * scale</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">let</span> uniforms = <span class="type">Uniforms</span>(modelViewProjectionMatrix: mat)</span><br><span class="line">        <span class="keyword">let</span> uniformRawBuffer = uniformBuffer?.contents()</span><br><span class="line">        uniformRawBuffer?.storeBytes(of: uniforms,</span><br><span class="line">                                     toByteOffset: <span class="type">MemoryLayout</span>&lt;<span class="type">Uniforms</span>&gt;.<span class="built_in">stride</span> * bufferIndex,</span><br><span class="line">                                     <span class="keyword">as</span>: <span class="type">Uniforms</span>.<span class="keyword">self</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rotationX, rotationY由外部传入，代码中的数学公式已在<a href="2018/08/04/coordinate-transformation/">坐标变换</a>里详细介绍了，这里就不再重复了。 shader代码也与绘制三角形一样。</p>
+<p>最终，run起来的结果如下：</p>
+<p><img src="/2018/08/25/metal-introduction/Cube.jpg" width="300px" height="652px" alt="立方体" title="立方体"> </p>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><p>本文简要介绍了现代GPU的渲染流水线和Metal API，完成了绘制三角形和立方体，其中在绘制立方体时可以看到，<a href="2018/08/04/coordinate-transformation/">坐标变换</a>是非常基础的知识，一定要牢牢掌握。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Metal/" rel="tag"># Metal</a>
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/04/coordinate-transformation/" rel="next" title="图形学中的坐标变换">
+                <i class="fa fa-chevron-left"></i> 图形学中的坐标变换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/09/simple-lighting/" rel="prev" title="简单光照">
+                简单光照 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">lowe</p>
+              <p class="site-description motion-element" itemprop="description">Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-API"><span class="nav-text">1. API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-OpenGL"><span class="nav-text">1.1 OpenGL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Vulkan"><span class="nav-text">1.2 Vulkan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Direct3D"><span class="nav-text">1.3 Direct3D</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-Metal"><span class="nav-text">1.4 Metal</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Rendering-Pipeline"><span class="nav-text">2. Rendering Pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Metal里重要的接口、类"><span class="nav-text">3. Metal里重要的接口、类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Hello-Triangle"><span class="nav-text">4. Hello Triangle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-绘制立方体"><span class="nav-text">5. 绘制立方体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-总结"><span class="nav-text">6. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lowe</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

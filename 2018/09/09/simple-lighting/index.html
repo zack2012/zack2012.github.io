@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。">
+<meta name="keywords" content="Metal">
+<meta property="og:type" content="article">
+<meta property="og:title" content="简单光照">
+<meta property="og:url" content="https://loweyu.com/2018/09/09/simple-lighting/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Lambertian.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/diffuse.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/ambient.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Phong.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpg">
+<meta property="og:image" content="https://loweyu.com/2018/09/09/simple-lighting/Blinn-Phong.jpeg">
+<meta property="og:updated_time" content="2018-11-11T09:32:04.697Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="简单光照">
+<meta name="twitter:description" content="要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。">
+<meta name="twitter:image" content="https://loweyu.com/2018/09/09/simple-lighting/Lambertian.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://loweyu.com/2018/09/09/simple-lighting/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>简单光照 | Lowe</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lowe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://loweyu.com/2018/09/09/simple-lighting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lowe">
+      <meta itemprop="description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lowe">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">简单光照
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-09-09 09:40:51" itemprop="dateCreated datePublished" datetime="2018-09-09T09:40:51+08:00">2018-09-09</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/图形学/" itemprop="url" rel="index"><span itemprop="name">图形学</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>要想让物体看起来更加栩栩如生，富有立体感，我们就需要引入光照模型。光照模型是对光线与物体表面之间相互作建模。一个物体即可能发射光线，也可能反射来自其他表面的光线，当观察物体表面上的一点时，所看到的颜色是取决于多个光源和多个反射表面之间的多次相互作用。</p>
+<a id="more"></a>
+<p>光照模型可以分为两类：全局光照和局部光照。在全局光照模型中，物体表面上一点的颜色不仅受到场景内的光源、物体表面材质等的影响，还受到物体之间相互反射的影响，这些反射可以是多次的。局部光照与此相反，物体表面上一点的颜色只与光源、物体表面材质、物体表面的局部几何性质有关，与场景中的其他表面无关，因此全局光照模型的计算要比局部光照模型复杂的多，但渲染出的效果会更加真实。这里我们只考虑局部光照模型。本文的源码放在了<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a>上。</p>
+<h2 id="1-光源"><a href="#1-光源" class="headerlink" title="1. 光源"></a>1. 光源</h2><p>光源可以分为以下几种模型：</p>
+<ul>
+<li><p>环境光(Ambient Light)<br>环境光使场景内获得均匀的光照。场景内的物体有时并没有受到光源的直接照射，而我们仍然可以看到这些物体，这是因为物体之间的相互反射，环境光就是对这种现象的一种近似。</p>
+</li>
+<li><p>点光源(Point Light)<br>点光源向所有的方向发射的光线强度相等。点光源相对简单，因此大多数应用都使用它。仅利用点光源来照明往往会使场景的亮暗反差太大。我们可以通过为场景设置环境光来减弱由点光源引起的过高的对比度问题。</p>
+</li>
+<li><p>聚光登(Spotlight)<br>聚光灯的特点是只在一个小的角度范围内发射光线。可以通过限制点光源发射光线的角度来构造一个聚光灯模型。</p>
+</li>
+<li><p>远距离光源(Distant Light)<br>当光源距离物体很远时，物体上每个点的入射光线方向都相同，这样的光源就是远距离光源。例如，太阳光对一个物体来说就是远距离光源。</p>
+</li>
+</ul>
+<h3 id="2-物体3种基本的光学性质"><a href="#2-物体3种基本的光学性质" class="headerlink" title="2. 物体3种基本的光学性质"></a>2. 物体3种基本的光学性质</h3><p>光线和材质之间的作用可以分为3类：  </p>
+<ul>
+<li><p>镜面反射(specular)<br>一个物体如果具有镜面反射的性质，则它看起来是有光泽的，这是因为被反射或者散射(scatter)出去的大多数光线的方向都和反射角都和入射角相近。理想镜面反射的光线反射角等于入射角。</p>
+</li>
+<li><p>漫反射(diffuse)<br>漫反射把入射光线向各个方向散射，理想的漫反射向各个方向的散射光想强度都相等，因此不同位置的观察者看到反射光线都一样。</p>
+</li>
+<li><p>折射(refraction)<br>折射是指光线进入物体并从物体的另一个位置再发射出去。具有折射性质的表面看起来是半透明的。</p>
+</li>
+</ul>
+<h2 id="3-Shading-Model"><a href="#3-Shading-Model" class="headerlink" title="3. Shading Model"></a>3. Shading Model</h2><h3 id="3-1-Lambertian-Shading-Model"><a href="#3-1-Lambertian-Shading-Model" class="headerlink" title="3.1 Lambertian Shading Model"></a>3.1 Lambertian Shading Model</h3><p>Lambertian Shading Model描述物体表面上一点的颜色正比与光源与该点法向量夹角的余弦值:  </p>
+<script type="math/tex; mode=display">
+c\propto \cos\theta</script><p>示意图如下: </p>
+<p><img src="/2018/09/09/simple-lighting/Lambertian.jpg" width="300px" height="200px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> </p>
+<p>用向量表示:  </p>
+<script type="math/tex; mode=display">
+c\propto \vec{n}\cdot\vec{l}</script><p>上面公式需要注意的点有:  </p>
+<ul>
+<li>向量在世界坐标系下。下面所有公式中的向量也都是在世界坐标系下。</li>
+<li>向量是单位向量。</li>
+</ul>
+<p>给上面的比例公式加上散射系数和光源强度就可以得到Lambertian Shading Model公式:  </p>
+<script type="math/tex; mode=display">
+c=c_dl_d\vec{n}\cdot\vec{l} \qquad (3.1.1)</script><p>考虑到物体可能背向光源，则$\vec{n}\cdot\vec{l}$为负值，因此还需要对(3.1.1)公式做些限制:  </p>
+<script type="math/tex; mode=display">
+c=c_dl_d\space max(0,\vec{n}\cdot\vec{l}) \qquad (3.1.2)</script><p>渲染的效果如下图所示: </p>
+<p><img src="/2018/09/09/simple-lighting/diffuse.jpg" width="300px" height="652px" alt="Lambertian Shading Model" title="Lambertian Shading Model"> </p>
+<h3 id="3-2-Ambient-Shading"><a href="#3-2-Ambient-Shading" class="headerlink" title="3.2 Ambient Shading"></a>3.2 Ambient Shading</h3><p>从上面的渲染图可以看出，如果只使用diffuse shading，则光源照不到的地方都是黑色的，而在真实环境中，因为到处都是光的反射，所以我们也可以看到光源照不到的地方，因此我们需要对(3.1.2)公式做适当的修改。</p>
+<p>我们可以为(3.1.2)公式增加一个常量，这个常量被叫做环境光，公式如下:</p>
+<script type="math/tex; mode=display">
+c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l}) \qquad (3.2.1)</script><p>$l_a$是环境光强度，$c_a$是环境光系数。引入环境光后的渲染图如下: </p>
+<p><img src="/2018/09/09/simple-lighting/ambient.jpg" width="300px" height="652px" alt="Ambient Shading Model" title="Ambient Shading Model"> </p>
+<h3 id="3-3-Phone-Shading"><a href="#3-3-Phone-Shading" class="headerlink" title="3.3 Phone Shading"></a>3.3 Phone Shading</h3><p>一些物体表面看起来会有光泽，这些光泽是由镜面反射产生的。Phone提出了一个近似模型，该模型的计算量只比漫反射多一点。该模型公式如下:  </p>
+<script type="math/tex; mode=display">
+c=c_rl_r\space max(0, (\vec{r}\cdot\vec{e})^p) \qquad (3.3.1)</script><p>其中$\vec{r}$是理想镜面反射光线的单位向量，$\vec{e}$是观察者方向的单位向量，如下图所示: </p>
+<p><img src="/2018/09/09/simple-lighting/Phong.jpg" width="300px" height="260px" alt="Phong Shading Model" title="Phong Shading Model"> </p>
+<p>从上图中可以推导出:</p>
+<script type="math/tex; mode=display">
+\vec{r}=-\vec{l}+2(\vec{l}\cdot\vec{n})\vec{n} \qquad (3.3.2)</script><p>这样我们就得到了完整Phong模型的计算公式。</p>
+<p>我们也可以对Phong模型做适当的修改，如下图所示:</p>
+<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpg" width="300px" height="260px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> </p>
+<p>$\vec{h}$是位于$\vec{l}$, $\vec{e}$的正中间的单位向量，因此有</p>
+<script type="math/tex; mode=display">
+\vec{h}=\frac{\vec{l}+\vec{e}}{|\vec{l}+\vec{e}|}</script><script type="math/tex; mode=display">
+\theta+w=\sigma+\theta-w</script><p>化简得</p>
+<script type="math/tex; mode=display">
+2w=\sigma</script><p>所以我们可以用$\vec{n}\cdot\vec{h}$来代替$\vec{r}\cdot\vec{e}$，则可以得到改进后的模型</p>
+<script type="math/tex; mode=display">
+c=c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.3)</script><p>注意(3.3.3)里的$p$与(3.3.2)的$p$并不是同一个值。改进后的模型也被称为Blinn-Phong模型。</p>
+<p>这样我们就得到一个比较完整的渲染公式</p>
+<script type="math/tex; mode=display">
+c=c_al_a+c_dl_d\space max(0,\vec{n}\cdot\vec{l})+c_rl_r\space max(0, (\vec{h}\cdot\vec{n})^p) \qquad (3.3.4)</script><p>使用(3.3.4)公式渲染得到的效果图如下</p>
+<p><img src="/2018/09/09/simple-lighting/Blinn-Phong.jpeg" width="300px" height="652px" alt="Blinn-Phong Shading Model" title="Blinn-Phong Shading Model"> </p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>本文介绍了Blinn-Phong光照模型，该模型虽然简单，但却有着很好的效果。完整的代码可以参考<a href="https://github.com/zack2012/MetalGraphics" target="_blank" rel="noopener">github</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Metal/" rel="tag"># Metal</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/25/metal-introduction/" rel="next" title="Metal API 介绍">
+                <i class="fa fa-chevron-left"></i> Metal API 介绍
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/07/ModelIO/" rel="prev" title="Model I/O 介绍">
+                Model I/O 介绍 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">lowe</p>
+              <p class="site-description motion-element" itemprop="description">Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-光源"><span class="nav-text">1. 光源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-物体3种基本的光学性质"><span class="nav-text">2. 物体3种基本的光学性质</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Shading-Model"><span class="nav-text">3. Shading Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Lambertian-Shading-Model"><span class="nav-text">3.1 Lambertian Shading Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Ambient-Shading"><span class="nav-text">3.2 Ambient Shading</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Phone-Shading"><span class="nav-text">3.3 Phone Shading</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lowe</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+    
+      <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      TeX: {equationNumbers: { autoNumber: "AMS" }}
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/mathjax@2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+    
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

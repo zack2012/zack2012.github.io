@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。 本文主要介绍通过Swift Package Manager(SwiftPM)包管理器">
+<meta name="keywords" content="Swift,Swift Package Manager,vulkan">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何通过Swift Package Manager导入C库">
+<meta property="og:url" content="https://loweyu.com/2018/10/30/how-to-import-a-c-library-to-swift/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。 本文主要介绍通过Swift Package Manager(SwiftPM)包管理器">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-11-11T09:32:04.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何通过Swift Package Manager导入C库">
+<meta name="twitter:description" content="Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。 本文主要介绍通过Swift Package Manager(SwiftPM)包管理器">
+
+
+
+
+
+
+  <link rel="canonical" href="https://loweyu.com/2018/10/30/how-to-import-a-c-library-to-swift/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>如何通过Swift Package Manager导入C库 | Lowe</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lowe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://loweyu.com/2018/10/30/how-to-import-a-c-library-to-swift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lowe">
+      <meta itemprop="description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lowe">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何通过Swift Package Manager导入C库
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-30 07:35:09" itemprop="dateCreated datePublished" datetime="2018-10-30T07:35:09+08:00">2018-10-30</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-11-11 17:32:04" itemprop="dateModified" datetime="2018-11-11T17:32:04+08:00">2018-11-11</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/swift/" itemprop="url" rel="index"><span itemprop="name">swift</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Swift作为一门2014年才正式公布的新语言，各种类型的库非常的匮乏，github上绝大多数的Swift库也主要是用于iOS上的，更糟糕的是，Swift从2014年发布以来，每一年的大版本升级都不向后兼容，导致一个库6个月以上没维护就编译不过去。好在Swift可以直接调用大部分的C库，一定程度上缓解了这个问题。</p>
+<p>本文主要介绍通过Swift Package Manager(SwiftPM)包管理器导入c库，这里我们先简要的介绍下SwiftPM。</p>
+<a id="more"></a>
+<h2 id="1-Swift-Package-Manager"><a href="#1-Swift-Package-Manager" class="headerlink" title="1. Swift Package Manager"></a>1. Swift Package Manager</h2><p>SwiftPM作为官方包管理器，随着Swift一起发布。SwiftPM最早由Max Howell开发，你很可能不认识他，但你一定用过它写的包管理工具<a href="https://brew.sh" target="_blank" rel="noopener">homebrew</a>，可惜的是他后面与Apple闹掰了，离开Apple没有再为SwiftPM贡献了。SwiftPM虽然由Apple负责开发，但它目前不支持iOS、watchOS、TVOS，主要的应用领域是编写命令行工具和服务端的开发。</p>
+<p>SwiftPM的DSL就是Swift，只要你会Swift，你就会SwiftPM，不像cocoapods，如果你需要自定义一些操作时，需要学习ruby。但SwiftPM完美的继承了Swift的缺点，每年都来个大改动，还不一定向后兼容，作为包管理器这就很难让人接受了。频繁变化的后果就是缺乏文档，或者文档过时，这里唯一推荐的文档就是<a href="https://github.com/apple/swift-package-manager/blob/master/Documentation/Usage.md" target="_blank" rel="noopener">官方文档</a>。SwiftPM本身支持xcode，可以通过<code>swift package generate-xcodeproj</code>生成xcode文件，但很难用，每添加一个文件或这更新依赖就得重新生成一次。值得庆幸的是，宇宙第一IDE厂商即将发布的新版clion将原生支持SwiftPM，具体可以看这篇<a href="https://blog.jetbrains.com/objc/2018/10/spm-support-clion/" target="_blank" rel="noopener">blog</a>。</p>
+<p>SwiftPM最重要的两个概念就是target和product了。熟悉xcode的话，对这两个概念应该都不陌生，在一个iOS工程里，编译后生成的product就是一个app，而这个app可以由多个target组成，每个target都是一个独立的编译单元。在SwiftPM里，product里可以是一个库或者是一个可执行文件。</p>
+<p>SwiftPM对文件结构是有要求的，一个典型的SwiftPM目录如下:</p>
+<ul>
+<li>root<ul>
+<li>Package.swift</li>
+<li>Sources<ul>
+<li>Foo<ul>
+<li>a.swift</li>
+<li>b.swift</li>
+</ul>
+</li>
+<li>Bar<ul>
+<li>c.swift</li>
+<li>d.swift</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Tests</li>
+</ul>
+</li>
+</ul>
+<p>原文件放在Sources目录下，Sources下的每个子文件夹都是一个Target。最开始SwiftPM不支持自定义文件目录布局，但在以后的实践中发现，不支持自定义文件目录很不方便，尤其是在导入一些c库时，这些c库有着很复杂的文件结构，所以在后面的版本里又加上自定义文件目录的功能。</p>
+<p>我们可以用下面命令生成一个支持SwiftPM的工程:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swift package init --<span class="built_in">type</span>=executable</span><br></pre></td></tr></table></figure>
+<p>type类型有三种empty、library、executable。三种类型都很简单，就不做解释了。值得提一句的是：当忘记或想查询某些命令的参数时，最简单的方式就是通过自带的help，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swift package init --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p>现在我们来看以下一个典型的Package.swift应该怎么编写，下面是一个简单的例子：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// swift-tools-version:4.2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> PackageDescription</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> package = <span class="type">Package</span>(</span><br><span class="line">    name: <span class="string">"demo"</span>,</span><br><span class="line">    products: [</span><br><span class="line">        .library(</span><br><span class="line">            name: <span class="string">"Foo"</span>,</span><br><span class="line">            targets: [<span class="string">"Foo"</span>]),</span><br><span class="line">        </span><br><span class="line">        .executable(</span><br><span class="line">            name: <span class="string">"demo"</span>,</span><br><span class="line">            targets: [<span class="string">"exec"</span>]</span><br><span class="line">        )</span><br><span class="line">    ],</span><br><span class="line">    </span><br><span class="line">    dependencies: [</span><br><span class="line">        .package(url: <span class="string">"https://github.com/apple/swift-package-manager"</span>, from: <span class="string">"0.3.0"</span>)</span><br><span class="line">    ],</span><br><span class="line"></span><br><span class="line">    targets: [</span><br><span class="line">        .target(name: <span class="string">"Foo"</span>),</span><br><span class="line">        </span><br><span class="line">        .target(</span><br><span class="line">            name: <span class="string">"exec"</span>,</span><br><span class="line">            dependencies: [</span><br><span class="line">                <span class="string">"Foo"</span>, <span class="string">"Utility"</span></span><br><span class="line">            ]</span><br><span class="line">        )</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>开头的第一行注释代表这个package是用SwiftPM 4.2版本编写的。整个Package.swift实际上就是在创建一个Package实例，因此你可以动态的根据一些条件创建不同的的Package实例，比如在只在linux下依赖某些库等。</p>
+<p>在这个例子中，我们对外暴露了两个product，一个名为Foo的库和一个名为demo的可执行文件，我们需要指定这个两个product由哪些target组成。设置完product后，需要指定这个package依赖的其他package，语法很简单，一个url地址和版本约束条件。url地址可以是git地址，也可以是本地地址，比如”../CHTTPParser”。最后就是设置这个package由哪些target组成，设置的方式基本与product类似。完整的语法可以参考这个<a href="https://github.com/apple/swift-package-manager/blob/master/Documentation/PackageDescriptionV4.md" target="_blank" rel="noopener">文档</a></p>
+<h2 id="2-导入C库"><a href="#2-导入C库" class="headerlink" title="2. 导入C库"></a>2. 导入C库</h2><p>目前支持SwiftPM的库大都集中在服务端，引用这部分库非常简单，但我们要在其他领域做一些事时，往往要需要自己导入c库。导入c库有两种方式，从源码编译，或者利用已经编译好的库。</p>
+<p>从源码编译可以参考<a href="https://github.com/apple/swift-nio" target="_blank" rel="noopener">swift-nio</a>。这里主要介绍如何利用已经编译好的c库。下面已glfw为例。</p>
+<p>首先我们要安装pkg-config，<a href="https://zh.wikipedia.org/wiki/Pkg-config" target="_blank" rel="noopener">pkg-config</a>是一个在源代码编译时查询已安装的库的使用接口的计算机工具软件。它输出已安装的库的相关信息。SwiftPM需要用它来导入c库。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install pkg-config</span><br></pre></td></tr></table></figure>
+<p>接着安装glfw3:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install glfw3</span><br></pre></td></tr></table></figure>
+<p>安装完成后我们使用下面命令检查是否安装glfw3的pkg-config：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pkg-config glfw3 --libs --cflags</span><br></pre></td></tr></table></figure>
+<p>如果已经安装了，会看到如下结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-I/usr/local/Cellar/glfw/HEAD-5afcd09/include -L/usr/local/Cellar/glfw/HEAD-5afcd09/lib -lglfw</span><br></pre></td></tr></table></figure>
+<p>安装pkg-config和glfw完成后，初始化一个swift package manager工程：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swift package init --<span class="built_in">type</span>=executable</span><br></pre></td></tr></table></figure>
+<p>在Sources里新建一个CGFLW文件夹，并在里面添加两个文件module.modulemap和shim.h，最后的目录结构如下：</p>
+<ul>
+<li>root<ul>
+<li>Package.swift</li>
+<li>Sources<ul>
+<li>CGLFW<ul>
+<li>module.modulemap</li>
+<li>shim.h</li>
+</ul>
+</li>
+<li>swiftGLFWDemo<ul>
+<li>main.swift</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Tests</li>
+</ul>
+</li>
+</ul>
+<p>对应的package.swift:</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// swift-tools-version:4.2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> PackageDescription</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> package = <span class="type">Package</span>(</span><br><span class="line">    name: <span class="string">"swiftGLFWDemo"</span>,</span><br><span class="line">    targets: [</span><br><span class="line">        .target(</span><br><span class="line">            name: <span class="string">"swiftGLFWDemo"</span>,</span><br><span class="line">            dependencies: [<span class="string">"CGLFW"</span>]</span><br><span class="line">        ),</span><br><span class="line"></span><br><span class="line">        .systemLibrary(</span><br><span class="line">            name: <span class="string">"CGLFW"</span>,</span><br><span class="line">            path: <span class="string">"Sources/CGLFW"</span>,</span><br><span class="line">            pkgConfig: <span class="string">"glfw3"</span></span><br><span class="line">        ),</span><br><span class="line">        </span><br><span class="line">        .testTarget(</span><br><span class="line">            name: <span class="string">"swiftGLFWDemoTests"</span>,</span><br><span class="line">            dependencies: [<span class="string">"swiftGLFWDemo"</span>]</span><br><span class="line">        ),</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>这里多了一种新的target：systemLibrary。path需要传入这个target的文件夹的相对路径，路径的起点就是package.swift所在的目录，所以CGLFW的相对路径是”Sources/CGLFW”。这里最关键的参数就是pkgConfig，对于glfw我们需要传入”glfw3”，那这个值从哪来？最简单的方法是通过下面命令获得：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pkg-config --list-all</span><br></pre></td></tr></table></figure>
+<p>该命令列出了当前系统所有的pkg-config，我们可以找到下面这一行描述：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glfw3 GLFW - A multi-platform library for OpenGL, window and input</span><br></pre></td></tr></table></figure>
+<p>接下来我们需要设置modulemap和shim.h，打开shim.h，输入：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GLFW_EXPOSE_NATIVE_COCOA</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;GLFW/glfw3.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;GLFW/glfw3native.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>这里引入需要暴露给swift的头文件。然后打开module.modulemap，输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">module CGLFW [system] &#123;</span><br><span class="line">  header &quot;shim.h&quot;</span><br><span class="line">  link &quot;glfw&quot;</span><br><span class="line">  export *</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>modulemap的介绍已经远远超出了文本的范围，如果对它有兴趣的话可以参考<a href="https://clang.llvm.org/docs/Modules.html" target="_blank" rel="noopener">官方文档</a>。这里需要提的只有两点：</p>
+<p>1、为什么需要shim.h这个文件？不能直接在module.modulemap里引用glfw的头文件吗？ </p>
+<p>如果直接引用glfw的头文件话，需要完整的路径，这样别人在使用你的库时很可能就要更改module.modulemap，设置成他的路径，非常的不方便，在目录下添加一个额外的头文件(这个头文件的名字可以随意取)就可以避免这种情况。使用shim.h还有另外一个好处，swift并不能完全导入c库的所有内容，比如复杂的宏和可变参数函数，有了这层，就可以对这些不能导入内容额外的包装一层暴露给swift，这也是很多库把这个头文件叫做shim.h的原因</p>
+<p>2、link的参数从哪来？</p>
+<p>使用<code>pkg-config glfw3 --libs --cflags</code>可以得到下面输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-I/usr/local/Cellar/glfw/HEAD-5afcd09/include -L/usr/local/Cellar/glfw/HEAD-5afcd09/lib -lglfw</span><br></pre></td></tr></table></figure>
+<p>最后的<code>-lglfw</code>去掉前面的-l就是我们要的参数。</p>
+<p>上面的工作完成后，我们可以在main.swift里添加下面代码来测试是否正确配置了glfw：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> CGLFW</span><br><span class="line"></span><br><span class="line">glfwInit();</span><br><span class="line"></span><br><span class="line">glfwWindowHint(<span class="type">GLFW_CLIENT_API</span>, <span class="type">GLFW_NO_API</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> window = glfwCreateWindow(<span class="number">800</span>, <span class="number">600</span>, <span class="string">"glfw window"</span>, <span class="literal">nil</span>, <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(glfwWindowShouldClose(window) == <span class="number">0</span>) &#123;</span><br><span class="line">    glfwPollEvents();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">glfwDestroyWindow(window);</span><br><span class="line"></span><br><span class="line">glfwTerminate();</span><br></pre></td></tr></table></figure>
+<p>在命令行下输入：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swift run</span><br></pre></td></tr></table></figure>
+<p>如果配置正确的话将看到一个空的window。</p>
+<p>可以通过brew安装的c库都可以使用上面的方法导入，但brew上没有的呢？比如在mac上使用vulkan，所以下面我们已vulkan为例子。</p>
+<p>Apple并不支持vulkan，所以在mac使用vulkan是通过<a href="https://en.wikipedia.org/wiki/MoltenVK" target="_blank" rel="noopener">MoltenVK</a>这个库来实现的，我们先去<a href="https://vulkan.lunarg.com/sdk/home" target="_blank" rel="noopener">lunarg</a>下载vulkan在mac上的sdk，将下载后的tar解压，我们只需要MoltenVK文件夹下的内容。</p>
+<p>现在我们要手动完成brew安装c库时做的事。首先我们要创建pkg-config配置文件，我们在MoltenVK文件夹下新建一个文件vulkan.pc，打开并输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">prefix=/usr/local</span><br><span class="line">exec_prefix=$&#123;prefix&#125;</span><br><span class="line">libdir=$&#123;exec_prefix&#125;/lib</span><br><span class="line">includedir=$&#123;prefix&#125;/include</span><br><span class="line"></span><br><span class="line">Name: MoltenVK</span><br><span class="line">Description: My MoltenVK</span><br><span class="line">Version: 1.0.0</span><br><span class="line"></span><br><span class="line">Libs: -L$&#123;libdir&#125; -lmoltenVK</span><br><span class="line">Cflags: -I$&#123;includedir&#125; -I$&#123;includedir&#125;/..</span><br></pre></td></tr></table></figure>
+<p>vulkan.pc文件还是比较简单的，Libs需要提供库的路径，Cflags提供头文件路径</p>
+<p>将MoltenVK整个文件夹拷入<code>/usr/local/Cellar</code>，为了让pkg-config找到我们刚才编写的vulkan.vc，需要把vulkan.pc拷入 <code>/usr/local/lib/pkgconfig</code>文件夹下，我们也可以用另一种方式，就是使用<code>ln</code>命令创建符号链接：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ln -s path/to/vulkan.vc /usr/<span class="built_in">local</span>/lib/pkgconfig/vulkan.pc</span><br></pre></td></tr></table></figure>
+<p>-s表示创建符号链接，第一个路径是源文件路径，第二个路径是目标路径。</p>
+<p>同理，我们需要把头文件夹vulkan放到<code>/usr/local/include</code>下，把库文件libMoltenVK.dylib放到<code>/usr/local/lib</code>下，这里都采用符号链接的方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ln -s path/to/vulkan /usr/<span class="built_in">local</span>/include/vulkan</span><br><span class="line"></span><br><span class="line">ln -s path/to/libMoltenVK.dylib /usr/<span class="built_in">local</span>/lib/libMoltenVK.dylib</span><br></pre></td></tr></table></figure>
+<p>完成以上步骤后我们就可以用SwiftPM的pkg-config来导入vulkan了。SwiftPM的编写与之前引入glfw是一样的。  </p>
+<p>在Sources目录下创建CVulkan文件夹，在CVulkan里创建module.modulemap和shim.h。module.modulemap的内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">module CVulkan [system] &#123;</span><br><span class="line">    header &quot;shim.h&quot;</span><br><span class="line">    link &quot;moltenVK&quot;</span><br><span class="line">    export *</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>shim.h的内容为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vulkan/vulkan.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>package.swift的内容为：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// swift-tools-version:4.2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> PackageDescription</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> package = <span class="type">Package</span>(</span><br><span class="line">    name: <span class="string">"swiftVulkanDemo"</span>,</span><br><span class="line">    </span><br><span class="line">    targets: [</span><br><span class="line">        .target(</span><br><span class="line">            name: <span class="string">"swiftVulkanDemo"</span>,</span><br><span class="line">            dependencies: [<span class="string">"CVulkan"</span>]</span><br><span class="line">        ),</span><br><span class="line">        .systemLibrary(</span><br><span class="line">            name: <span class="string">"CVulkan"</span>,</span><br><span class="line">            pkgConfig: <span class="string">"vulkan"</span></span><br><span class="line">        ),</span><br><span class="line">        </span><br><span class="line">        .testTarget(</span><br><span class="line">            name: <span class="string">"swiftVulkanDemoTests"</span>,</span><br><span class="line">            dependencies: [<span class="string">"swiftVulkanDemo"</span>]</span><br><span class="line">        ),</span><br><span class="line">    ]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>在main.swift里输入下面内容来测试安装是否正确：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> CVulkan</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> appInfo = <span class="type">VkApplicationInfo</span>(sType: <span class="type">VK_STRUCTURE_TYPE_APPLICATION_INFO</span>,</span><br><span class="line">                                pNext: <span class="literal">nil</span>, pApplicationName: <span class="string">"Hello Triangle"</span>,</span><br><span class="line">                                applicationVersion: <span class="number">0</span>,</span><br><span class="line">                                pEngineName: <span class="string">"No Engine"</span>,</span><br><span class="line">                                engineVersion: <span class="number">0</span>,</span><br><span class="line">                                apiVersion: <span class="type">UInt32</span>(<span class="type">VK_VERSION_1_0</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> instance: <span class="type">VkInstance</span>?</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> createInfo = <span class="type">VkInstanceCreateInfo</span>()</span><br><span class="line">createInfo.sType = <span class="type">VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO</span></span><br><span class="line">createInfo.pApplicationInfo = <span class="built_in">withUnsafePointer</span>(to: &amp;appInfo) &#123; $<span class="number">0</span> &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> result = vkCreateInstance(&amp;createInfo, <span class="literal">nil</span>, &amp;instance)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> result == <span class="type">VK_SUCCESS</span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">"created instance result success"</span>)</span><br><span class="line">&#125;</span><br><span class="line">vkDestroyInstance(instance, <span class="literal">nil</span>)</span><br></pre></td></tr></table></figure>
+<p>设置正确的话，<code>swift run</code>后将可以看到</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">created instance result success</span><br></pre></td></tr></table></figure>
+<h2 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h2><p>swift package manager目前还是很不完善，缺乏文档，不支持iOS，我想这主要原因是Apple的工作重心并不在这上面，Max Howell曾在twitter上提过，目前的工作重心是<a href="https://github.com/apple/swift-llbuild" target="_blank" rel="noopener">llbulid</a>，Apple新写的一套bulid工具，这个构建工具已经成为xcode 10的默认构建工具了。但无论如何，swift package manager作为官方包管理工具，前途可以说是非常光明的。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/Swift-Package-Manager/" rel="tag"># Swift Package Manager</a>
+          
+            <a href="/tags/vulkan/" rel="tag"># vulkan</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/18/texture-map/" rel="next" title="纹理映射">
+                <i class="fa fa-chevron-left"></i> 纹理映射
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">lowe</p>
+              <p class="site-description motion-element" itemprop="description">Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Swift-Package-Manager"><span class="nav-text">1. Swift Package Manager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-导入C库"><span class="nav-text">2. 导入C库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-总结"><span class="nav-text">3. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lowe</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
