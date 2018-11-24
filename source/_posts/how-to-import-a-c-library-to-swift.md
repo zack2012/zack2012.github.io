@@ -1,7 +1,7 @@
 ---
 title: 通过Swift Package Manager导入C库
 date: 2018-10-30 07:35:09
-categories: swift
+categories: 编程语言
 tags: 
     - Swift
     - Swift Package Manager
