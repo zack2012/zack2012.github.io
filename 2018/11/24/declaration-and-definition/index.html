@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="一个大型app通常有许多库组成，在参与大型app的开发时，我们应该掌握声明与定义的区别，同时对ABI稳定有一定的了解。">
+<meta name="keywords" content="c++,objective-c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="声明和定义的区别">
+<meta property="og:url" content="https://loweyu.com/2018/11/24/declaration-and-definition/index.html">
+<meta property="og:site_name" content="Lowe">
+<meta property="og:description" content="一个大型app通常有许多库组成，在参与大型app的开发时，我们应该掌握声明与定义的区别，同时对ABI稳定有一定的了解。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-11-24T10:33:31.393Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="声明和定义的区别">
+<meta name="twitter:description" content="一个大型app通常有许多库组成，在参与大型app的开发时，我们应该掌握声明与定义的区别，同时对ABI稳定有一定的了解。">
+
+
+
+
+
+
+  <link rel="canonical" href="https://loweyu.com/2018/11/24/declaration-and-definition/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>声明和定义的区别 | Lowe</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Lowe</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://loweyu.com/2018/11/24/declaration-and-definition/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="lowe">
+      <meta itemprop="description" content="Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lowe">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">声明和定义的区别
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-11-24 09:45:46 / 修改时间：18:33:31" itemprop="dateCreated datePublished" datetime="2018-11-24T09:45:46+08:00">2018-11-24</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/编程语言/" itemprop="url" rel="index"><span itemprop="name">编程语言</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/24/declaration-and-definition/" class="leancloud_visitors" data-flag-title="声明和定义的区别">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数：</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一个大型app通常有许多库组成，在参与大型app的开发时，我们应该掌握声明与定义的区别，同时对ABI稳定有一定的了解。</p>
+<a id="more"></a>
+<h2 id="1-变量声明与定义"><a href="#1-变量声明与定义" class="headerlink" title="1. 变量声明与定义"></a>1. 变量声明与定义</h2><p>很多时候，我们在写代码时并没有注意到变量的声明和定义是有区别的，比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>上面的代码同时声明和定义了变量i，但如果把这行代码放在.h文件里，声明和定义的区别就会显示出来，会在link阶段报duplicate symbols错误。那么声明和定义变量的区别在哪里？最大的区别在于声明变量时只向程序表明了该变量的类型和名字，但不分配内存。定义变量的时候不仅声明了该变量，还为该变量分配了内存。程序中可以声明变量多次，但只能定义一次。如果我们定义变量多次就会报plicate symbols错误。</p>
+<p>因为.h文件会被多个文件引用，所以我们在.h文件里要声明变量，而不定义变量。代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.h</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> i;</span><br><span class="line"></span><br><span class="line"><span class="comment">// a.&#123;c, cpp, m, mm&#125;</span></span><br><span class="line"><span class="keyword">int</span> i = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+<p>通过在变量i前添加extern关键字来表示这是个声明。注意如果同时对这个变量进行了初始化，则变成了定义，例如:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> i = <span class="number">10</span>; <span class="comment">// 定义</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-外部连接和内部连接"><a href="#2-外部连接和内部连接" class="headerlink" title="2. 外部连接和内部连接"></a>2. 外部连接和内部连接</h2><p>在介绍外部连接和内部连接前，需要先了解什么是编译单元：</p>
+<p>当一个.{c,cpp,m,mm}文件在编译时，预处理器首先递归包含.h文件，形成一个含有所有必要信息的单个源文件,这个源文件就是一个编译单元。link程序会把不同编译单元中产生的符号联系起来，构成一个可执行程序。</p>
+<p>一个名称(变量、函数名、类等)在连接时可以和其它编译单元交互，那么这个名称就有外部连接。有了外部连接，就意味着这个名称存在与其他编译单元里的名称冲突等可能，这里最常见的一个坑就是认为没在.h文件声明变量，就不会暴露，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.&#123;c,cpp,m,mm&#125;</span></span><br><span class="line"><span class="keyword">int</span> j = <span class="number">10</span>; <span class="comment">// 编译器在编译时，会在前面加上extern，因此其他编译单元里如果定义了同样的变量，link时就会报错。</span></span><br></pre></td></tr></table></figure>
+<p>一个名称对于它的编译单元来说是局部的，并且在连接时不会与其它编译单元中的同样的名称相冲突，那么这个名称有内部连接。内部连接不会污染全局名称，我们可以通过如下方式声明内部连接变量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.&#123;c,cpp,m,mm&#125;</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> j = <span class="number">10</span>; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 对于c++，还可以使用匿名空间方式定义内部连接</span></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>static</code>关键字可以把名称声明为内部连接，其在不同的场合有着不同的作用，例如定义静态变量。在c++里，匿名空间里的声明都是内部连接，c++使用这种方式定义内部连接的好处是更加简洁，不容易出错(不需要在每个声明前加上static)，如果与外部变量冲突，使用<code>static</code>会屏蔽掉外部全局变量，而使用匿名空间则编译不过去，报Reference to ‘xxx’ is ambiguous错误，而且没有可以直接绕过的方法，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.h</span></span><br><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> j;</span><br><span class="line"></span><br><span class="line"><span class="comment">// a.cpp</span></span><br><span class="line"><span class="keyword">int</span> j = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.cpp</span></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">100</span></span><br><span class="line">    <span class="comment">// 如果遇到与全局变量冲突，可以由以下几种方式绕过</span></span><br><span class="line">    <span class="keyword">int</span> getJ() &#123;</span><br><span class="line">        <span class="keyword">return</span> j;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> &amp;localJ = ::j;</span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; j &lt;&lt; <span class="string">"\n"</span> <span class="comment">// error: reference to 'j' is ambiguous</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; ::j &lt;&lt; <span class="string">"\n"</span> <span class="comment">// 输出10</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; getJ() &lt;&lt; <span class="string">" "</span> &lt;&lt; localJ &lt;&lt; <span class="string">"\n"</span> <span class="comment">// 输出 100 100</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可以看到，使用全局变量是万恶之源。不要在.h文件里声明内部连接变量，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.h</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">10</span>; <span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">100</span>; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>当多个编译单元包含上面.h文件时，会在每个编译单元内都定义变量i，j。这些变量是相互独立的，有着不同的内存地址。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">10</span>; <span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">100</span>; </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.h</span></span><br><span class="line"><span class="keyword">int</span> foo;</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.&#123;c,cpp,m,mm&#125;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"a.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    i = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// c.&#123;c,cpp,m,mm&#125;</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"a.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">bar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> * argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; foo() &lt;&lt; <span class="string">" "</span> &lt;&lt; bar() &lt;&lt; <span class="string">"\n"</span>; <span class="comment">// 输出 100 10</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然看上去像每个编译单元都共享同一个变量定义，但实际上每个变量都是独立的。也许有人会说，如果用上述方法定义常量呢，这样就不存在上面的问题了。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> i = <span class="number">10</span>; <span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不要在.h文件里这样做!</span></span><br><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> j = <span class="number">100</span>; </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这么定义常量还是有问题的，第一个问题是会引起最终二进制代码膨胀，假设有100个文件引用了，就需要分配100个同样大小的内存空间，这完全是没有必要的。第二个问题是ABI不稳定，这放到下节讨论。</p>
+<h2 id="3-ABI稳定"><a href="#3-ABI稳定" class="headerlink" title="3. ABI稳定"></a>3. ABI稳定</h2><p>很多人都知道API(Application Programming Interface)，但可能并不知道ABI(Application Binary Interface)。ABI中文翻译为二进制接口，我们知道，一个库最终会生成二进制文件，ABI就是描述二进制库之间的接口关系，它的范围很广，例如函数的调用约定(calling convention)，数据结构布局等。</p>
+<p>ABI不稳定会有什么问题？ABI不稳定意味着我们不能对外提供二进制库，只能提供源码库。例如，有两个库A和B，B依赖于A，App主工程同时依赖A、B，一天，A发布了新版本，如果ABI稳定的话，我们重新打包App时并不需要重新编译B库，但ABI不稳定的话，我们还要重新编译B库才行。最典型的例子就是swift，因为swift ABI不稳定，每个使用swift编写的app都必须把swift的核心库打进包里，这不仅阻碍了swift的普及(大厂对app包大小有着严格的限制，哪怕整个app只有一个文件是用swift编写的，也会使包的大小增加几M，这对大厂来说是无法接受的)，也使Apple自身无法发布用swift编写的库。</p>
+<p>对于中小型app来说，其实并不需要太关心abi稳定，中小型app通常都是在一个工程里把所有库的源码都引入一起编译，因为app规模不大，这样做的成本并不高。但对于大型app，这样做就行不通了。</p>
+<p>大型app的开发一般有如下特点：</p>
+<ul>
+<li>app的主工程为一个空壳，几乎不含有任何代码</li>
+<li>app由非常多的组建库组成，一些组建库被许多组建库所引用，有时你甚至不知道哪些库引用了你(当然我们可以通过分析mach文件来查询哪些库引用了你，比如<a href="https://github.com/gdbinit/MachOView" target="_blank" rel="noopener">MachOView</a>就是一个很好的工具)</li>
+<li>在一次迭代周期中，往往只有少量的库被更新编译，重新打包，更多的库都是直接使用上个版本的二进制。</li>
+</ul>
+<p>因此，在大型app开发过程中，ABI稳定就显得格外重要了，下面介绍常见的几个注意点。</p>
+<h3 id="3-1-对外暴露的-h文件里不要使用宏"><a href="#3-1-对外暴露的-h文件里不要使用宏" class="headerlink" title="3.1 对外暴露的.h文件里不要使用宏"></a>3.1 对外暴露的.h文件里不要使用宏</h3><p>这点很好理解，宏在预处理阶段会进行字符串替换，所以编译完后的库实质上就是写死了一段代码。对宏的修改想要生效，所有依赖库都必须重新编译打包。例如，有A、B两个库，在A库对外的.h文件里定义了一个常量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FOO 3</span></span><br></pre></td></tr></table></figure>
+<p>B库引用了A库，在一次迭代中，A库根据需求，需要把常量FOO改为4，那作为A库维护者，他必须通知B库的维护者用最新的A库重新编译打包。试想一下，如果有50个库引用了A库，那A库的维护者就要一个一个去通知，这个工作量和时间成本可想可知。</p>
+<h3 id="3-2-对外暴露的-h文件里不要使用enum"><a href="#3-2-对外暴露的-h文件里不要使用enum" class="headerlink" title="3.2 对外暴露的.h文件里不要使用enum"></a>3.2 对外暴露的.h文件里不要使用enum</h3><p>不使用宏很好理解，但对于enum，很多人就会忽略了，本质上使用宏跟使用enum是一样的。例如下面一段代码写在对外暴露的.h文件里：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, Color) &#123;</span><br><span class="line">    ColorRed,</span><br><span class="line">    ColorBlue,</span><br><span class="line">    ColorOthers</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在一次需求迭代中，这个enum添加了一个新的颜色：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="built_in">NS_ENUM</span>(<span class="built_in">NSUInteger</span>, Color) &#123;</span><br><span class="line">    ColorRed,</span><br><span class="line">    ColorBlue,</span><br><span class="line">    ColorYellow,</span><br><span class="line">    ColorOthers</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>那所有使用ColorOthers且并未重新编译打包的地方都会出现逻辑错误，把ColorYellow当成ColorOthers。原因就是这么写实际上与前面所说的在.h文件声明内部连接变量一样，在每个编译单元里都会重新定义一次Color，这些定义相互独立，因此如果不重新编译打包，ColorOthers的值还是2。所以一旦定义了enum的值，修改起来的成本就与宏一样了。如果必须使用enum，一定保证新引入的值不会改变之前定义的值。上面的论述也同样适用与c++里的enum和enum class。</p>
+<h3 id="3-3-不要随便使用inline"><a href="#3-3-不要随便使用inline" class="headerlink" title="3.3 不要随便使用inline"></a>3.3 不要随便使用inline</h3><p>使用inline与宏一样，将原来的函数或变量在调用地方展开，这样这个函数或变量就成了ABI的一部分。使用inline一般都是为了性能优化，把一个非inline函数改为inline函数是很容易的，但把一个inline函数改成非inline函数就很困难了，我们完全可以等到确定这段代码成为性能瓶颈时在把它改成inline。</p>
+<p>swift-evolution里有一个<a href="https://github.com/apple/swift-evolution/blob/master/proposals/0193-cross-module-inlining-and-specialization.md" target="_blank" rel="noopener">proposals</a>专门讲了这个。</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>在日常开发中，我们应该对声明和定义的区别有着清楚的认识，同时也应该对ABI稳定有一定的了解，这样可以避免我们在工作中踩到一些不必要的坑。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/c/" rel="tag"># c++</a>
+          
+            <a href="/tags/objective-c/" rel="tag"># objective-c</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/30/how-to-import-a-c-library-to-swift/" rel="next" title="通过Swift Package Manager导入C库">
+                <i class="fa fa-chevron-left"></i> 通过Swift Package Manager导入C库
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container"></div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">lowe</p>
+              <p class="site-description motion-element" itemprop="description">Lose your pride, lose your patience, and lose your mind. But whatever you do, don't lose hope</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-变量声明与定义"><span class="nav-text">1. 变量声明与定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-外部连接和内部连接"><span class="nav-text">2. 外部连接和内部连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ABI稳定"><span class="nav-text">3. ABI稳定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-对外暴露的-h文件里不要使用宏"><span class="nav-text">3.1 对外暴露的.h文件里不要使用宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-对外暴露的-h文件里不要使用enum"><span class="nav-text">3.2 对外暴露的.h文件里不要使用enum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-不要随便使用inline"><span class="nav-text">3.3 不要随便使用inline</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-总结"><span class="nav-text">4. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lowe</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v6.5.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '4e773c5670f5999e68d0',
+          clientSecret: 'dd637ac63ad966b112353db5bdb11844854c6586',
+          repo: 'zack2012.github.io',
+          owner: 'zack2012',
+          admin: ['zack2012'],
+          id: location.pathname,
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function ({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+              var $element = $(document.getElementById(url));
+              $element.find('.leancloud-visitors-count').text(counter.time + 1);
+            
+            Counter('put', `/classes/Counter/${counter.objectId}`, JSON.stringify({ time: { "__op":"Increment", "amount":1 } }))
+            
+            .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+            })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1}))
+                .done(function () {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function () {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+      .fail(function ({ responseJSON }) {
+        console.log('LeanCloud Counter Error:' + responseJSON.code + " " + responseJSON.error);
+      });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + "qqxGtB42AnnNC9Dddb9QnEz9-gzGzoHsz")
+        .done(function ({ api_server }) {
+          var Counter = function (method, url, data) {
+            return $.ajax({
+              method: method,
+              url: `https://${api_server}/1.1${url}`,
+              headers: {
+                'X-LC-Id': "qqxGtB42AnnNC9Dddb9QnEz9-gzGzoHsz",
+                'X-LC-Key': "KRlurtpttqUwsxiEquMwh4Uz",
+                'Content-Type': 'application/json',
+              },
+              data: data,
+            });
+          };
+          
+          addCount(Counter);
+          
+        })
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
