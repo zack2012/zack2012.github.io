@@ -70,3 +70,33 @@ tags:
 
     ```
     如果使用`decltype(U())`就能得到正确的结果，这是因为`S{}`走的是aggregate initialization，不同的c++版本要求不一样(c++20好像没这问题，待验证)。
+
+4. One-Definition Rule(ODR): Define noninline functions or objects exactly once across all files, and define classes, inline functions, and inline variables at most once per translation unit, making sure that all definitions for the same entity are identical.
+
+5. 在整个程序里只能定义一次的有：  
+    - Noninline functions and noninline member functions (including full specializations
+of function templates)  
+
+    - Noninline variables (essentially, variables declared in a namespace scope or in the
+global scope, and without the `static` specifier)  
+    - Noninline static data members
+
+6. C++11 Value Category
+    - lvalue: An lvalue is a glvalue that is not an xvalue. string literal is lvalue.
+
+    - prvalue: A prvalue is an expression whose evaluation initializes an object or a bit-field, or
+computes the value of the operand of an operator.
+
+    - xvalue: An xvalue is a glvalue designating an object or bit-field whose resources can be
+reused (usually because it is about to “expire”—the “x” in xvalue originally came
+from “eXpiring value”).
+
+    - glvalue: A glvalue is an expression whose evaluation determines the identity of an object,
+bit-field, or function (i.e., an entity that has storage).
+
+    - rvalue: An rvalue is an expression that is either a prvalue or an xvalue.
+
+7. use `decltype((x))` to check expression value category:
+    - type if x is a prvalue
+    - type& if x is an lvalue
+    - type&& if x is an xvalue
